@@ -1,2 +1,2 @@
-# sniffer
-Is  a program that sniffes the network
+# Sniffer
+Is a program that sniffes the network

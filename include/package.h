@@ -7,59 +7,38 @@
 #define __PACKAGE_H_
 
 /* std Libreries */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
-
-/* The different types of enums */
-enum UNI_MULTI {
-	UNI_CAST,
-	MULTI_CAST
-};
-
-enum GLOB_LOCA {
-	GLOBALLY_UNIQUE,
-	LOCALLY_ADMIN
-};
+#include "protocols/protocols.h"
+#include "ethernet/ethernet.h"
 
 
-/* The types of ethernet */
-enum ethertype {
-	IPV4_TYPE,
-	ARP_TYPE,
-	VLAN_TYPE,
-	IPV6_TYPE
-};
-
-
-
+#ifndef __BYTE_DATA_
+#define __BYTE_DATA_
 /* This is necessary to create the buffers */
 typedef unsigned char byte;
 
+#endif
 
 /* This class will mantine the data */
 struct Package {
-	enum ethertype etherType;
+	/* To catch the protocol */
+	union Protocols protocol;
 	
-	byte *macaddressDes;   /* Mac address Destination | 6 bytes */
-	enum UNI_MULTI lastbitDes;
-	enum GLOB_LOCA penultimatebitDes;
-	bool broadCastDes;
+	/* The ethernet object */
+	Ether *ether;
 	
-	byte *macaddressSor;   /* Mac address Source | 6 bytes */
-	enum UNI_MULTI lastbitSor;
-	enum GLOB_LOCA penultimatebitSor;
-    bool broadCastSor;
+    /* printData: Is the method which prints the data */
+    void (*printData) (struct Package *package);
 	
-	unsigned short *ethernetTypeBytes;    /* Ethernet data type | 2 bytes */
+	/* printProtocol: To print the protocol that we receive */
+	void (*printProtocol) (struct Package *package);
 
-	byte *data; /* data */
-	unsigned short length; /* the amount of data */
-	
-	unsigned *frameCheck;    /* Frame check | 4 bytes */
-	
-	
-	/* printData: Is the method which prints the data */
-	void (*printData)(struct Package *package);
+	/* printEthernet: To print all the ethernet package */
+	void (*printEthernet) (struct Package *package);
 };
 
 
@@ -68,6 +47,7 @@ struct Package *Package (byte *data, unsigned short length);
 
 
 typedef struct Package Pak;
+
 
 #endif
 

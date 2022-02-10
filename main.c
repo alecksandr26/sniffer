@@ -4,14 +4,14 @@
 #include "include/file.h"
 
 
+
 /* Standart libraries */
 #include <stdio.h>
 
 
-
 void main ()
 {
-	char file[20];
+	char file[50];
 	
 	printf("Put a file: ");
 	scanf("%s", file);
@@ -24,5 +24,11 @@ void main ()
 	/* basically we load the package */
 	Pak *pack = Package(f->data, f->length - 18);
 
-	pack->printData(pack);
+	/* To free al the memory */
+	f->deconstructor(f);
+	
+	pack->ether->print(pack->ether);
+
+	pack->protocol.arp->print(pack->protocol.arp);
+	
 }

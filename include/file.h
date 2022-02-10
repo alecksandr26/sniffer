@@ -14,6 +14,9 @@ struct File {
 	
 	/* seeHex: prints the info in hex */
 	void (*seeHex) (struct File *file);
+
+	/* deconstructor: To free all the memory */
+	void (*deconstructor) (struct File *file);
 };
 
 

@@ -53,6 +53,17 @@ void seeHex (struct File *f)
 }
 
 
+/* deconstructor: To free all the memory */
+void deconstructor (struct File *f)
+{
+    free(f->data);
+	free(f);
+    
+}
+
+
+
+
 
 
 /* File: Here I create the contructor that creates the file */
@@ -65,6 +76,8 @@ struct File *File (char *fileName)
 
 	/* Here link the method */
 	f->seeHex = &seeHex;
+	f->deconstructor = &deconstructor;
+	
 	
 	readFile(f);
 

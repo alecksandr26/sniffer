@@ -40,7 +40,7 @@ unsigned short ETHER_TYPE_DECMIAL[AMOUNT_ETHER_TYPES] = { 1544, 128, 129,	56710 
 
 
 /* The list of ether type string */
-char *ETHER_TYPE_STRING[AMOUNT_ETHER_TYPES] = { "APR", "IPV4", "VLAN", "IPV6" };
+char *ETHER_TYPE_STRING[AMOUNT_ETHER_TYPES] = { "ARP", "IPV4", "VLAN", "IPV6" };
 
 
 /* The types of ethernet */

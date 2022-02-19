@@ -80,10 +80,10 @@ void printArpData (struct Arp *a)
 	printHex(a->e->ethernetTypeBytes, 1);
 	puts(")");
 	printArpRequestType(a->request);
-	printMacAddress(a->macDestination, a->e->broadCastDes, "Dest");
-	printIpv4(a->ipv4Destination, "Dest");
-	printMacAddress(a->macSource, a->e->broadCastDes, "Src");
-	printIpv4(a->ipv4Source, "Src");
+	printMacAddress(a->macDestination, a->e->broadCastDes, "Target");
+	printIpv4(a->ipv4Destination, "Target");
+	printMacAddress(a->macSource, a->e->broadCastDes, "Sender");
+	printIpv4(a->ipv4Source, "Sender");
 	puts("---------------------------------------");
 	
 }

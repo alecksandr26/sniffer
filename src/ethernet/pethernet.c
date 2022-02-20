@@ -8,7 +8,7 @@
 void printHex (byte *hex, int l)
 {
 	int i; /* index */
-	
+	printf("0x");
 	for (i = 0; i < l; ++i) {
 		if (*(hex + i) < 16)
 			printf("0");
@@ -37,7 +37,7 @@ void printMacAddress (byte *address, bool broadCast, char *macName)
 		if (*(address + i) < 16)
 			printf("0");
 		printf("%x", *(address + i));
-		printf(" BroadCast\n");
+		printf(" Broadcast\n");
 	}
 	else {
 		if (*(address + i) < 16)

@@ -1,11 +1,7 @@
-
 /* Here I include this thing */
 #include "../../include/protocols/arp.h"
 
-/* To include the macaddress */
-#include "../../include/ethernet/ethernet.h"
-/* To include the print functions */
-#include "../../include/ethernet/pethernet.h"
+
 
 /* defineOperationrequest: To know which operation the arp package is doing */
 enum REQUEST_REPLY defineOperationRequest (byte *request)
@@ -18,20 +14,28 @@ enum REQUEST_REPLY defineOperationRequest (byte *request)
 	}
 }
 
-
 /* readDataArp: This data will give you our data */
 void readDataArp (byte *data, struct Arp *a)
 {
 	memcpy(a->hardwareType, data, 2);
+	data += 2;
+
+	memcpy(a->protocol, data, 2);
+	data += 4;
+	
+	memcpy(a->byteOfRequestReply, data, 2);
+	data += 2;
+
+	memcpy(a->macSender, data, 6);
+	data += 6;
+	
+	memcpy(a->ipv4Sender, data, 4);
+	data += 4;
+
+	memcpy(a->macTarget, data, 6);
 	data += 6;
 
-	memcpy(a->byteOfRequestReply, data, 2);
-	data += 8;
-	
-	memcpy(a->ipv4Source, data, 4);
-	data += 10;
-
-	memcpy(a->ipv4Destination, data, 4);
+	memcpy(a->ipv4Target, data, 4);
 }
 
 /* printHardWareType: To print which hardware type we have */
@@ -56,13 +60,12 @@ void printArpRequestType (enum REQUEST_REPLY r)
 	}
 }
 
-
 /* printIpv4: To print the Ipv4 */
 void printIpv4 (byte *ipv4, char *type)
 {
 	int i; /* index */
 	
-	printf("IP Address %s: ", type);
+	printf("%s IP Address: ", type);
 	for (i = 0; i < 4; ++i) {
 		if (i == 3)
 			printf("%u\n", *(ipv4 + i));
@@ -75,15 +78,17 @@ void printIpv4 (byte *ipv4, char *type)
 void printArpData (struct Arp *a)
 {
 	puts("---------------------------------------");
+	puts("| ARP |\n");
 	printHardWareType(a->hardwareType);
-	printf("Ethernet Type: %s (", ETHER_TYPE_STRING[a->e->etherType]);
-	printHex(a->e->ethernetTypeBytes, 1);
-	puts(")");
+	printf("Protocol Type: ");
+	printHex(a->protocol, 1);
+	printf(" (%s)\n", ETHER_TYPE_STRING[a->protocolType]);
+	
 	printArpRequestType(a->request);
-	printMacAddress(a->macDestination, a->e->broadCastDes, "Target");
-	printIpv4(a->ipv4Destination, "Target");
-	printMacAddress(a->macSource, a->e->broadCastDes, "Sender");
-	printIpv4(a->ipv4Source, "Sender");
+	printMacAddress(a->macTarget, false, "Target");
+	printIpv4(a->ipv4Target, "Target");
+	printMacAddress(a->macSender, false, "Sender");
+	printIpv4(a->ipv4Sender, "Sender");
 	puts("---------------------------------------");
 	
 }
@@ -92,20 +97,27 @@ void printArpData (struct Arp *a)
 
 
 /* AprPackage: This function will create all our arp structure  */
-struct Arp *ArpPackage (byte *data, Ether *e)
+struct Arp *ArpPackage (byte *data)
 {
 	struct Arp *a = (struct Arp *) malloc(sizeof(struct Arp));
 
-	a->e = e; /* Here we get the object that we need */
 	a->hardwareType = (byte *) malloc(2);
+	a->protocol = (byte *) malloc(2);
 	a->byteOfRequestReply = (byte *) malloc(2);
-	a->ipv4Destination = (byte *) malloc(4);
-	a->macSource = e->macaddressSor; /* Catch the mac address */
-	a->ipv4Source = (byte *) malloc(4);
-	a->macDestination = e->macaddressDes; /* Catch the mac address */
-
+	
+	
+	/* Here we commit the error */
+	a->macSender = (byte *) malloc(6); /* Catch the mac address */
+	a->ipv4Sender = (byte *) malloc(4);
+	
+	/* Here we commit the error */
+	a->macTarget = (byte *) malloc(6); /* Catch the mac address */
+	a->ipv4Target = (byte *) malloc(4);
+	
 	readDataArp(data, a);
-
+   
+	a->protocolType = knowEtherType(a->protocol);
+	
 	a->request = defineOperationRequest(a->byteOfRequestReply);
 
 	a->print = &printArpData;

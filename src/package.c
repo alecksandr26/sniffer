@@ -3,21 +3,18 @@
 #include "../include/package.h"
 
 
-/* WE DON'T USE THIS FUNCITON */
-/* flipData: Here we flip the bytes from data types  */
-byte *flipData (byte *data, unsigned l)
+/* printProtocol: This function will print the protocol */
+void printProtocol (Pak *package)
 {
-	int i; /* index */
-	byte *temp = (byte *) malloc(l);
-
-	for (i = 0; i < l; ++i)
-		*(temp + (l - 1) - i) = *(data + i);
-
-	free(data);
-   
-	return temp;
+	switch (package->ether->etherType) {
+		case ARP_TYPE: /* To print arp protocol */
+			package->protocol.arp->print(package->protocol.arp);
+			break;
+	    case IPV4_TYPE: /* To prin ipv4 prototcol */
+			package->protocol.ipv4->print(package->protocol.ipv4);
+			break;
+	}
 }
-
 
 
 /* Package: This is the constructor we need the data*/
@@ -28,6 +25,9 @@ struct Package *Package (byte *data, unsigned short dataLength)
 	
 	p->ether = Ethernet(data, dataLength);
 	p->protocol = defineProtocol(p->ether, p->ether->data);
+	
+	p->print = &printProtocol;
+	p->printEthernet = p->ether->print;
 	
 	/* Here I return the object */
 	return p;

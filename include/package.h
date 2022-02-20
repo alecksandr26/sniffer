@@ -31,11 +31,8 @@ struct Package {
 	/* The ethernet object */
 	Ether *ether;
 	
-    /* printData: Is the method which prints the data */
-    void (*printData) (struct Package *package);
-	
-	/* printProtocol: To print the protocol that we receive */
-	void (*printProtocol) (struct Package *package);
+	/* print: To print the protocol that we receive */
+	void (*print) (struct Package *package);
 
 	/* printEthernet: To print all the ethernet package */
 	void (*printEthernet) (struct Package *package);

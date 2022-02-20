@@ -1,22 +1,19 @@
+/* Standart libraries */
+#include <stdio.h>
 
 /* Import my of my dependencies */
 #include "include/package.h"
 #include "include/file.h"
 
-
-
-/* Standart libraries */
-#include <stdio.h>
-
-
-void main ()
+void main (int argc, char *argv[])
 {
-	char file[50];
+	if (argc > 2 || argc < 2) {
+		fprintf(stderr, "%s: Error: we need a file\n", argv[0]);
+		fprintf(stderr, "Usage: %s <file-name>\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
 	
-	printf("Put a file: ");
-	scanf("%s", file);
-	
-	F *f = File(file);
+	F *f = File(argv[1]);
 
 	/* To read the data fast */
 	// f->seeHex(f);
@@ -27,8 +24,9 @@ void main ()
 	/* To free al the memory */
 	f->deconstructor(f);
 	
-	pack->ether->print(pack->ether);
-
-	pack->protocol.arp->print(pack->protocol.arp);
+	/* To print the protocol */
+	pack->printEthernet(pack->ether);
+    pack->print(pack);
+	
 	
 }

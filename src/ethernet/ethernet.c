@@ -4,7 +4,6 @@
 #include "../../include/ethernet/ethernet.h"
 #include "../../include/ethernet/pethernet.h"
 
-
 /* And these are the print functions */
 
 /* mulOrUni: To know if it is multicast or unicast mac address */
@@ -16,7 +15,6 @@ enum UNI_MULTI mulOrUni (byte *data)
 	return MULTI_CAST;
 }
 
-
 /* globOrLoca: To know if it is a gloabl or local mac address */
 enum GLOB_LOCA globOrLoca (byte *data)
 {
@@ -25,8 +23,6 @@ enum GLOB_LOCA globOrLoca (byte *data)
 
 	return LOCALLY_ADMIN;
 }
-
-
 
 /* printTypeOfMacAddress: Here we are going to print what type of mac adress is */
 void printTypeOfMacAddress (enum UNI_MULTI uniMul, enum GLOB_LOCA globLo)
@@ -50,16 +46,16 @@ void printTypeOfMacAddress (enum UNI_MULTI uniMul, enum GLOB_LOCA globLo)
 	}
 }
 
-
-
 /* printDataEthernet: Prints the data of the package using the whole functions of print */
 void printDataEthernet (struct EtherPackage *e)
 {
 	puts("---------------------------------------");
+	puts("| ETHERNET |\n");
+	
 	/* print the ether type */
-	printf("Ethernet Type: %s (", ETHER_TYPE_STRING[e->etherType]);
+	printf("Ethernet Type: ");
 	printHex(e->ethernetTypeBytes, 1);
-	puts(")");
+	printf(" (%s)\n", ETHER_TYPE_STRING[e->etherType]);
 	
 	printMacAddress(e->macaddressDes, e->broadCastDes, "Dest");
 	/* To know what type of mac address is */
@@ -71,19 +67,16 @@ void printDataEthernet (struct EtherPackage *e)
 	printTypeOfMacAddress(mulOrUni(e->macaddressSor),
 						  globOrLoca(e->macaddressSor));
 	
-	printf("\nPackage Size: %i\n", e->length);
+	printf("\nPackage Size: (%i)\n", e->length);
 
 	/* Here we print the frame check */
-	printf("Frame Check Secure: ");
+	printf("Frame Check Secure: (");
 	printHex(e->frameCheck, 3);
-	puts("");
+	puts(")");
 	puts("---------------------------------------");
 }
 
-
-
 /* These are the core functions */
-
 
 /* isBroadCast: If the mac address is broadCast */
 bool isBroadCast (byte *data)
@@ -97,7 +90,6 @@ bool isBroadCast (byte *data)
 
 	return (sum == (255 * 6)) ? true : false;
 }
-
 
 /* readDataEthernet: To load all the data to the ethernet package */
 void readDataEthernet (struct EtherPackage *e, byte *data)
@@ -129,23 +121,18 @@ void readDataEthernet (struct EtherPackage *e, byte *data)
 	e->broadCastSor = isBroadCast(e->macaddressSor);
 }
 
-
 /* knowEtherType: Is a function to know the ether type */
-void knowEtherType (struct EtherPackage *e)
+enum ETHER_TYPES knowEtherType (byte *data)
 {
 	int i; /* index */
 	
 	for (i = 0; i < AMOUNT_ETHER_TYPES; ++i)
-		if (*((unsigned short *) e->ethernetTypeBytes) == ETHER_TYPE_DECMIAL[i]) {
-			e->etherType = i;
-			return;
-		}
+		if (*((unsigned short *) data) == ETHER_TYPE_DECMIAL[i])
+			return i;
 			
 	puts("Error: Uknow ethernet type");
 	exit(EXIT_FAILURE);
 }
-
-
 
 /* EtherPackage: Now here I load the data of the ethernet package */
 struct EtherPackage *Ethernet (byte *data, unsigned short length)
@@ -163,8 +150,8 @@ struct EtherPackage *Ethernet (byte *data, unsigned short length)
 	readDataEthernet(e, data);
 
 	/* To know which package we were receiving */
-	knowEtherType(e);
-
+	e->etherType = knowEtherType(e->ethernetTypeBytes);
+	
 	/* printDataEthernet: We are going to print the data as ethernet */
     e->print = &printDataEthernet;
 	

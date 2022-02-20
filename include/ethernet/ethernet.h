@@ -36,7 +36,7 @@ enum GLOB_LOCA {
 
 
 /* The ethernetTypes in decimal numbers */
-unsigned short ETHER_TYPE_DECMIAL[AMOUNT_ETHER_TYPES] = { 1544, 128, 129,	56710 };
+unsigned short ETHER_TYPE_DECMIAL[AMOUNT_ETHER_TYPES] = { 1544, 8, 129,	56710 };
 
 
 /* The list of ether type string */
@@ -79,10 +79,13 @@ struct EtherPackage {
 	void (*print) (struct EtherPackage *etherdata);
 };
 
-
 /* EtherPackage: Now here I load the data of the ethernet package */
 struct EtherPackage *Ethernet (byte *data, unsigned short length);
 
+/* Some extra functions */
+
+/* knowEthertype: To know which ethernet type we have in the package */
+enum ETHER_TYPES knowEtherType (byte *data);
 
 typedef struct EtherPackage Ether;
 

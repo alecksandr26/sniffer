@@ -29,6 +29,8 @@ enum REQUEST_REPLY {
 struct Arp {
 	enum REQUEST_REPLY request;
 	enum ETHER_TYPES protocolType;
+	byte *hardwareLength;
+	byte *protocolLength;
 	byte *hardwareType;
 	byte *protocol;
 	byte *byteOfRequestReply;

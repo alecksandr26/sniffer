@@ -21,7 +21,13 @@ void readDataArp (byte *data, struct Arp *a)
 	data += 2;
 
 	memcpy(a->protocol, data, 2);
-	data += 4;
+	data += 2;
+	
+	memcpy(a->hardwareLength, data, 1);
+	data++;
+
+	memcpy(a->protocolLength, data, 1);
+	data++;
 	
 	memcpy(a->byteOfRequestReply, data, 2);
 	data += 2;
@@ -74,6 +80,10 @@ void printIpv4 (byte *ipv4, char *type)
 	}
 }
 
+
+
+
+
 /* printArpdata: This function will print all the data */
 void printArpData (struct Arp *a)
 {
@@ -83,6 +93,8 @@ void printArpData (struct Arp *a)
 	printf("Protocol Type: ");
 	printHex(a->protocol, 1);
 	printf(" (%s)\n", ETHER_TYPE_STRING[a->protocolType]);
+	printf("Hardware Address Length: (%u)\n", *a->hardwareLength);
+	printf("Protocol Address Length: (%u)\n", *a->protocolLength);
 	
 	printArpRequestType(a->request);
 	printMacAddress(a->macTarget, false, "Target");
@@ -104,7 +116,8 @@ struct Arp *ArpPackage (byte *data)
 	a->hardwareType = (byte *) malloc(2);
 	a->protocol = (byte *) malloc(2);
 	a->byteOfRequestReply = (byte *) malloc(2);
-	
+	a->hardwareLength = (byte *) malloc(1);
+	a->protocolLength = (byte *) malloc(1);
 	
 	/* Here we commit the error */
 	a->macSender = (byte *) malloc(6); /* Catch the mac address */

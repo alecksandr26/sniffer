@@ -129,7 +129,7 @@ enum ETHER_TYPES knowEtherType (byte *data)
 	for (i = 0; i < AMOUNT_ETHER_TYPES; ++i)
 		if (*((unsigned short *) data) == ETHER_TYPE_DECMIAL[i])
 			return i;
-			
+	
 	puts("Error: Uknow ethernet type");
 	exit(EXIT_FAILURE);
 }

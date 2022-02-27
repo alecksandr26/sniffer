@@ -1,11 +1,5 @@
-
-
 #ifndef __ARP_H_
 #define __ARP_H_
-
-/* To use some extra functions that this depency has */
-#include "../ethernet/ethernet.h"
-#include "../ethernet/pethernet.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -18,17 +12,29 @@
 typedef unsigned char byte;
 #endif
 
+/* The amount types */
+#define AMOUNT_TYPES 4
+
+unsigned short PROTOCOL_TYPES_DECIMAL[AMOUNT_TYPES] = { 1544, 8, 129,	56710 };
+char *PROTOCOL_TYPES_STRING[AMOUNT_TYPES] = { "ARP", "IPV4", "VLAN", "IPV6" };
+
+/* The types of ethernet */
+enum PROTOCOL_TYPES {
+	ARP,
+    IPV4,
+    VLAN,
+    IPV6
+};
 
 enum REQUEST_REPLY {
 	REQUEST,
 	REPLY
 };
 
-
 /* struct Arp will contains the data from arp */
 struct Arp {
 	enum REQUEST_REPLY request;
-	enum ETHER_TYPES protocolType;
+	enum PROTOCOL_TYPES protocolType;
 	byte *hardwareLength;
 	byte *protocolLength;
 	byte *hardwareType;
@@ -43,17 +49,9 @@ struct Arp {
 	void (*print) (struct Arp *a);
 };
 
-
 /* AprPackage: This function will create all our arp structure */
 struct Arp *ArpPackage (byte *data);
 
-/* Some extra functions */
-
-/* printIpv4: To print a ipv4 */
-void printIpv4 (byte *ipv4, char *type);
-
 typedef struct Arp Arp;
 
-
 #endif
-

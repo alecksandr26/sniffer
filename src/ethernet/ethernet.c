@@ -1,5 +1,3 @@
-
-
 /* Here we are going to include ethernet.h */
 #include "../../include/ethernet/ethernet.h"
 #include "../../include/ethernet/pethernet.h"

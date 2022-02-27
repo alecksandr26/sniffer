@@ -1,11 +1,5 @@
-
-
 #ifndef __IPV4_H_
 #define __IPV4_H_
-
-#include "../ethernet/ethernet.h"
-#include "../ethernet/pethernet.h"
-#include "../protocols/arp.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +8,7 @@
 #ifndef __BYTE_DATA_
 #define __BYTE_DATA_
 /* This is necessary to create the buffers */
-typedef unsigned char byte;a
+typedef unsigned char byte;
 #endif
 
 enum IPV4_PROTOCOL {
@@ -24,7 +18,6 @@ enum IPV4_PROTOCOL {
 };
 
 char *IPV4_PROTOCOLS[] = { "TCP", "UDP", "ICMP" };
-
 
 struct Ipv4 {
 	byte version; /* 4 bits */
@@ -51,10 +44,9 @@ struct Ipv4 {
 
 struct Ipv4 *Ipv4Package (byte *data);
 
+/* printIpv4: To print a ipv4 */
+void printIpv4 (byte *ipv4, char *type);
+
 typedef struct Ipv4 Ipv4;
 
 #endif
-
-
-
-

@@ -1,8 +1,4 @@
-
-
-
 #include "../../include/ethernet/pethernet.h"
-
 
 /*   printHex: This function will print in hex some buffer */
 void printHex (byte *hex, int l)
@@ -18,7 +14,6 @@ void printHex (byte *hex, int l)
 		printf("0");
 	printf("%x", *(hex + i));
 }
-
 
 /* printMacAddress: Print the MacAdddress inside of the package */
 void printMacAddress (byte *address, bool broadCast, char *macName)

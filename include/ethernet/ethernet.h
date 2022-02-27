@@ -1,7 +1,3 @@
-
-
-/* This contain all the functions to print the ethernet */
-
 #ifndef __ETHERNET_H_
 #define __ETHERNET_H_
 
@@ -10,17 +6,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-
 #ifndef __BYTE_DATA_
 #define __BYTE_DATA_
 /* This is necessary to create the buffers */
 typedef unsigned char byte;
 #endif
-
-
-/* The amount ehter types */
-#define AMOUNT_ETHER_TYPES 4
-
 
 /* The different types of enums */
 enum UNI_MULTI {
@@ -28,20 +18,19 @@ enum UNI_MULTI {
     MULTI_CAST
 };
 
-
 enum GLOB_LOCA {
     GLOBALLY_UNIQUE,
     LOCALLY_ADMIN
 };
 
+/* The amount ehter types */
+#define AMOUNT_ETHER_TYPES 4
 
 /* The ethernetTypes in decimal numbers */
 unsigned short ETHER_TYPE_DECMIAL[AMOUNT_ETHER_TYPES] = { 1544, 8, 129,	56710 };
 
-
 /* The list of ether type string */
 char *ETHER_TYPE_STRING[AMOUNT_ETHER_TYPES] = { "ARP", "IPV4", "VLAN", "IPV6" };
-
 
 /* The types of ethernet */
 enum ETHER_TYPES {
@@ -50,7 +39,6 @@ enum ETHER_TYPES {
     VLAN_TYPE,
     IPV6_TYPE
 };
-
 
 /* This is the struct to save the ether data */
 struct EtherPackage {

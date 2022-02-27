@@ -1,4 +1,3 @@
-
 #include "../../include/protocols/ipv4.h"
 
 /* flipData: Here we flip the bytes from data types  */
@@ -93,6 +92,20 @@ void printIpv4Flags (byte f)
 	}
 }
 
+/* printIpv4Arp: To print the Ipv4 */
+void printIpv4Arp (byte *ipv4, char *type)
+{
+	int i; /* index */
+	
+	printf("%s IP Address: ", type);
+	for (i = 0; i < 4; ++i) {
+		if (i == 3)
+			printf("%u\n", *(ipv4 + i));
+		else
+			printf("%u.", *(ipv4 + i));
+	}
+}
+
 /* printIpv4: To prin the ipv4 program */
 void printIpv4Protocol (struct Ipv4 *i)
 {
@@ -111,8 +124,8 @@ void printIpv4Protocol (struct Ipv4 *i)
 	printf("Header Checksum: (");
 	printHex(i->checkSum, 1);
 	puts(")\n");
-	printIpv4(i->srcIpv4, "Source");
-	printIpv4(i->desIpv4, "Destination");
+	printIpv4Arp(i->srcIpv4, "Source");
+	printIpv4Arp(i->desIpv4, "Destination");
 	puts("---------------------------------------");
 }
 
@@ -135,5 +148,3 @@ struct Ipv4 *Ipv4Package (byte *data)
 	
 	return i;
 }
-
-

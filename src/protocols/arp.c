@@ -1,8 +1,6 @@
 /* Here I include this thing */
 #include "../../include/protocols/arp.h"
 
-
-
 /* defineOperationrequest: To know which operation the arp package is doing */
 enum REQUEST_REPLY defineOperationRequest (byte *request)
 {
@@ -12,6 +10,19 @@ enum REQUEST_REPLY defineOperationRequest (byte *request)
 		case 512:
 			return REPLY;
 	}
+}
+
+/* knowEtherType: Is a function to know the ether type */
+enum PROTOCOL_TYPES knowProtocolType (byte *data)
+{
+	int i; /* index */
+	
+	for (i = 0; i < AMOUNT_TYPES; ++i)
+		if (*((unsigned short *) data) == PROTOCOL_TYPES_DECIMAL[i])
+			return i;
+	
+	puts("Error: Uknow ethernet type");
+	exit(EXIT_FAILURE);
 }
 
 /* readDataArp: This data will give you our data */
@@ -80,10 +91,6 @@ void printIpv4 (byte *ipv4, char *type)
 	}
 }
 
-
-
-
-
 /* printArpdata: This function will print all the data */
 void printArpData (struct Arp *a)
 {
@@ -92,7 +99,7 @@ void printArpData (struct Arp *a)
 	printHardWareType(a->hardwareType);
 	printf("Protocol Type: ");
 	printHex(a->protocol, 1);
-	printf(" (%s)\n", ETHER_TYPE_STRING[a->protocolType]);
+	printf(" (%s)\n", PROTOCOL_TYPES_STRING[a->protocolType]);
 	printf("Hardware Address Length: (%u)\n", *a->hardwareLength);
 	printf("Protocol Address Length: (%u)\n", *a->protocolLength);
 	
@@ -104,9 +111,6 @@ void printArpData (struct Arp *a)
 	puts("---------------------------------------");
 	
 }
-
-
-
 
 /* AprPackage: This function will create all our arp structure  */
 struct Arp *ArpPackage (byte *data)
@@ -129,7 +133,7 @@ struct Arp *ArpPackage (byte *data)
 	
 	readDataArp(data, a);
    
-	a->protocolType = knowEtherType(a->protocol);
+	a->protocolType = knowProtocolType(a->protocol);
 	
 	a->request = defineOperationRequest(a->byteOfRequestReply);
 

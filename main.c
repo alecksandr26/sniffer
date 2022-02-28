@@ -25,6 +25,5 @@ void main (int argc, char *argv[])
 	f->deconstructor(f);
 	
 	/* To print the protocol */
-	pack->printEthernet(pack->ether);
 	pack->print(pack);
 }

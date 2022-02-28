@@ -1,7 +1,5 @@
-
 /* Here I import my header file */
 #include "../include/package.h"
-
 
 /* printProtocol: This function will print the protocol */
 void printProtocol (Pak *package)
@@ -16,6 +14,12 @@ void printProtocol (Pak *package)
 	}
 }
 
+/* printPackage: This function will all the package */
+void printPackage (Pak *p)
+{
+	p->ether->print(p->ether);
+	printProtocol(p);
+}
 
 /* Package: This is the constructor we need the data*/
 struct Package *Package (byte *data, unsigned short dataLength)
@@ -26,8 +30,7 @@ struct Package *Package (byte *data, unsigned short dataLength)
 	p->ether = Ethernet(data, dataLength);
 	p->protocol = defineProtocol(p->ether, p->ether->data);
 	
-	p->print = &printProtocol;
-	p->printEthernet = p->ether->print;
+	p->print = &printPackage;
 	
 	/* Here I return the object */
 	return p;

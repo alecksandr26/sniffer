@@ -61,11 +61,6 @@ void deconstructor (struct File *f)
     
 }
 
-
-
-
-
-
 /* File: Here I create the contructor that creates the file */
 struct File *File (char *fileName)
 {

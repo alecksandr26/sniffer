@@ -1,8 +1,3 @@
-/*
-  This is a module which reads a ethernet package and we get info from it 
-*/
-
-
 #ifndef __PACKAGE_H_
 #define __PACKAGE_H_
 
@@ -26,25 +21,19 @@ typedef unsigned char byte;
 /* This class will mantine the data */
 struct Package {
 	/* To catch the protocol */
-	union Protocols protocol;
+	union Protocol protocol;
 	
 	/* The ethernet object */
 	Ether *ether;
 	
 	/* print: To print the protocol that we receive */
-	void (*print) (struct Package *package);
-
-	/* printEthernet: To print all the ethernet package */
-	void (*printEthernet) (struct Package *package);
+	void (*print) (struct Package *package);	
 };
-
 
 /* Package: This is the constructor we need the data*/
 struct Package *Package (byte *data, unsigned short length);
 
-
 typedef struct Package Pak;
-
 
 #endif
 

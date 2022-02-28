@@ -22,7 +22,7 @@ enum IPV4_PROTOCOL knowIpv4Protocol (byte p)
 			return ICMP;
 		case 6:
 			return TCP;
-		case 17:	
+		case 17:
 			return UDP;
 	}
 }
@@ -36,7 +36,6 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
 	
 	memcpy(&(i->IHL), data, 1); /* Header length */
 	i->IHL &= 0b00001111;
-	
 	data++;
 
 	memcpy(&(i->TOS), data, 1); /* Type of service */
@@ -79,17 +78,18 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
 /* printIpv4flags: To print the flags from the package of ipv4 */
 void printIpv4Flags (byte f)
 {
-	switch (f) {
-		case 1:
-			puts("\tReserved");
-			break;
-		case 2:
-			puts("\tDon't Fragment");
-			break;
-		case 4:
-			puts("\tMore Fragments");
-			break;
-	}
+	if (!(f & 0b00000001))
+		puts("    0. bit = 0 (Reservado)");
+	
+	if (f & 0b00000010)
+		puts("    1. bit = 1 (No divisible)");
+	else
+		puts("    1. bit = 0 (Divisible)");
+	
+	if (f & 0b00000100)
+		puts("    2. bit = 1 (Fragmento Intermedio)");
+	else
+		puts("    2. bit = 0 (Último Fragmento)");
 }
 
 /* printIpv4Arp: To print the Ipv4 */
@@ -115,7 +115,7 @@ void printIpv4Protocol (struct Ipv4 *i)
 	printf("Internet Header length: (%u) bytes\n", i->IHL * 4);
 	printf("Type Of Service: (%u)\n", i->TOS);
 	printf("Total length: (%u) bytes\n", *((unsigned short *) i->length));
-	printf("\nFlag: (0x0%x)\n", i->flags);
+	puts("\nFlags: ");
 	printIpv4Flags(i->flags);
 	printf("\nFragment Offset: (%u)\n", *((unsigned short *) i->offset));
 	
@@ -141,7 +141,7 @@ struct Ipv4 *Ipv4Package (byte *data)
 	i->srcIpv4 = (byte *) malloc(4);
 	i->desIpv4 = (byte *) malloc(4);
 	i->options = (byte *) malloc(40);
-
+	
 	readDataIpv4(i, data);
 	
 	i->print = &printIpv4Protocol;

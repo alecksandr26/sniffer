@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 #ifndef __BYTE_DATA_
@@ -30,6 +31,7 @@ struct Ipv4 {
 	byte TTL;
 	byte protocol;
 	enum IPV4_PROTOCOL protocolType;
+	bool extraProtocol;
 	byte *checkSum;
 	
 	byte *srcIpv4;

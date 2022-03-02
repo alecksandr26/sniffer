@@ -4,7 +4,8 @@ char *TYPE_ICMP_STRING[] = {
 	"Echo Reply",
 	"Destination Unreachable",
 	"Redirect Message",
-	"Echo Request"
+	"Echo Request",
+	"Time exceeded"
 };
 
 /* knowTypeOfIcmp: To know the type of icmp we have */
@@ -19,6 +20,8 @@ enum TYPE_ICMP knowTypeOfIcmp (byte type)
 		return REDIRECT_MESSAGE;
 	case 8:
 		return ECHO_REQUEST;
+	case 11:
+	    return TIME_EXCEEDED;
 	}
 }
 
@@ -53,6 +56,10 @@ void readDataIcmp (struct Icmp *i, byte *data)
 		data += 2; /* unused bytes */
 		memcpy(i->nextHopMTU, data, 2);
 		data += 2;
+		i->extraIpv4Package = true;
+	}
+	else if (i->type == 11) {
+		data += 4; /* unused bytes */
 		i->extraIpv4Package = true;
 	}
 	
@@ -102,7 +109,6 @@ char *codeIcmp (struct Icmp *i)
 		case 15:
 			return "Precedence cutoff in effect";
 		}
-		break;
 	case REDIRECT_MESSAGE:
 		switch (i->code) {
 		case 0:
@@ -114,10 +120,16 @@ char *codeIcmp (struct Icmp *i)
 		case 3:
 			return "Redirect Datagram for the ToS & host";
 		}
-		break;
 	case ECHO_REQUEST:
 		return "Echo request (used to ping)";
-	};
+	case TIME_EXCEEDED:
+		switch (i->code) {
+		case 0:
+			return "TTL expired in transit";
+		case 1:
+			return "Fragment reassembly time exceeded";
+		}
+	}
 }
 
 /* printIcmp: Prints the protocol of icmp */

@@ -72,17 +72,17 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
 void printIpv4Flags (byte f)
 {
 	if (!(f & 0b00000001))
-		puts("    0. bit = 0 (Reservado)");
+		puts("    0. bit = 0 (Reserved)");
 	
 	if (f & 0b00000010)
-		puts("    1. bit = 1 (No divisible)");
+		puts("    1. bit = 1 (Not divisible)");
 	else
 		puts("    1. bit = 0 (Divisible)");
 	
 	if (f & 0b00000100)
-		puts("    2. bit = 1 (Fragmento Intermedio)");
+		puts("    2. bit = 1 (Intermediate Fragment)");
 	else
-		puts("    2. bit = 0 (Último Fragmento)");
+		puts("    2. bit = 0 (Last Fragment)");
 }
 
 

@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "../include/helpers.h"
+
 #ifndef __BYTE_DATA_
 #define __BYTE_DATA_
 /* This is necessary to create the buffers */

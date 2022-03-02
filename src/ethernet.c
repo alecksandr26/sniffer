@@ -1,8 +1,5 @@
 /* Here we are going to include ethernet.h */
-#include "../../include/ethernet/ethernet.h"
-#include "../../include/ethernet/pethernet.h"
-
-/* And these are the print functions */
+#include "../include/ethernet.h"
 
 /* mulOrUni: To know if it is multicast or unicast mac address */
 enum UNI_MULTI mulOrUni (byte *data)
@@ -21,6 +18,8 @@ enum GLOB_LOCA globOrLoca (byte *data)
 
 	return LOCALLY_ADMIN;
 }
+
+/* And these are the print functions */
 
 /* printTypeOfMacAddress: Here we are going to print what type of mac adress is */
 void printTypeOfMacAddress (enum UNI_MULTI uniMul, enum GLOB_LOCA globLo)
@@ -65,7 +64,7 @@ void printDataEthernet (struct EtherPackage *e)
 	printTypeOfMacAddress(mulOrUni(e->macaddressSor),
 						  globOrLoca(e->macaddressSor));
 	
-	printf("\nPackage Size: (%i)\n", e->length);
+	printf("Package Size: (%i)\n", e->length);
 
 	/* Here we print the frame check */
 	printf("Frame Check Secure: (");

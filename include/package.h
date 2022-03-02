@@ -8,8 +8,7 @@
 #include <stdbool.h>
 
 #include "protocols/protocols.h"
-#include "ethernet/ethernet.h"
-
+#include "ethernet.h"
 
 #ifndef __BYTE_DATA_
 #define __BYTE_DATA_

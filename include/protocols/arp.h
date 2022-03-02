@@ -6,11 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef __BYTE_DATA_
-#define __BYTE_DATA_
-/* This is necessary to create the buffers */
-typedef unsigned char byte;
-#endif
+#include "../helpers.h"
 
 /* The amount types */
 #define AMOUNT_TYPES 4

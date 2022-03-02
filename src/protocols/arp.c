@@ -77,20 +77,6 @@ void printArpRequestType (enum REQUEST_REPLY r)
 	}
 }
 
-/* printIpv4: To print the Ipv4 */
-void printIpv4 (byte *ipv4, char *type)
-{
-	int i; /* index */
-	
-	printf("%s IP Address: ", type);
-	for (i = 0; i < 4; ++i) {
-		if (i == 3)
-			printf("%u\n", *(ipv4 + i));
-		else
-			printf("%u.", *(ipv4 + i));
-	}
-}
-
 /* printArpdata: This function will print all the data */
 void printArpData (struct Arp *a)
 {

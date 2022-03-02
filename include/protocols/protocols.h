@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "arp.h"
-#include "ipv4.h"
+#include "./arp.h"
+#include "./ipv4.h"
 
 /* Here I'm going to use some functions to know which protocol we are going to read */
-#include "../ethernet/ethernet.h"
+#include "../ethernet.h"
 
 /* This is the union that we are going to use to create our arp */
 union Protocol {

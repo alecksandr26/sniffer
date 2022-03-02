@@ -1,21 +1,7 @@
 #include "../../include/protocols/ipv4.h"
 
-/* flipData: Here we flip the bytes from data types  */
-byte *flipData (byte *data, unsigned l)
-{
-	int i; /* index */
-	byte *temp = (byte *) malloc(l);
-
-	for (i = 0; i < l; ++i)
-		*(temp + (l - 1) - i) = *(data + i);
-
-	free(data);
-   
-	return temp;
-}
-
 /* knowIpv4Protocol: Know which ipv4 protocol we are going to use */
-enum IPV4_PROTOCOL knowIpv4Protocol (byte p)
+enum PROTOCOL_TRANSPORT knowIpv4Protocol (byte p)
 {
 	switch (p) {
 	    case 1:
@@ -73,6 +59,11 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
 
 	memcpy(i->desIpv4, data, 4); /* The destination ipv4 */
 	data += 4;
+
+	if (i->IHL > 5)
+		i->data = data; /* After reading the whole data we put the rest here */
+	else
+		i->data = data + ((i->IHL - 5) * 4);
 }
 
 /* printIpv4flags: To print the flags from the package of ipv4 */
@@ -92,19 +83,6 @@ void printIpv4Flags (byte f)
 		puts("    2. bit = 0 (Último Fragmento)");
 }
 
-/* printIpv4Arp: To print the Ipv4 */
-void printIpv4Arp (byte *ipv4, char *type)
-{
-	int i; /* index */
-	
-	printf("%s IP Address: ", type);
-	for (i = 0; i < 4; ++i) {
-		if (i == 3)
-			printf("%u\n", *(ipv4 + i));
-		else
-			printf("%u.", *(ipv4 + i));
-	}
-}
 
 /* printIpv4: To prin the ipv4 program */
 void printIpv4Protocol (struct Ipv4 *i)
@@ -120,19 +98,23 @@ void printIpv4Protocol (struct Ipv4 *i)
 	printf("\nFragment Offset: (%u)\n", *((unsigned short *) i->offset));
 	
 	printf("Time To Live: (%u)\n", i->TTL);
-	printf("Protocol: (%s)\n", IPV4_PROTOCOLS[i->protocolType]);
+	printf("Protocol: (%s)\n", PROTOCOL_TRANSPORT_STRING[i->protocolType]);
 	printf("Header Checksum: (");
 	printHex(i->checkSum, 1);
 	puts(")\n");
-	printIpv4Arp(i->srcIpv4, "Source");
-	printIpv4Arp(i->desIpv4, "Destination");
+	printIpv4(i->srcIpv4, "Source");
+	printIpv4(i->desIpv4, "Destination");
 	puts("---------------------------------------");
+	/* Here print the rest of the procotol */
+	printIpv4ProtocolTransport(i->protocolData, i->protocolType);
 }
 
 /* Ipv4package: This function will create the ipv4 object */
 struct Ipv4 *Ipv4Package (byte *data)
 {
 	struct Ipv4 *i = (struct Ipv4 *) malloc(sizeof(struct Ipv4));
+	unsigned short l;
+	
 
 	i->length = (byte *) malloc(2);
 	i->id = (byte *) malloc(2);
@@ -143,6 +125,13 @@ struct Ipv4 *Ipv4Package (byte *data)
 	i->options = (byte *) malloc(40);
 	
 	readDataIpv4(i, data);
+	if (i->IHL < 6)
+		l = (*((unsigned short *) i->length)) - 20;
+	else
+		l = (*((unsigned short *) i->length)) - (4 * (i->IHL - 5));
+	
+	/* Here we define the protocol that we have */
+	i->protocolData = defineProtocolTransport(i->protocolType, i->data, l);
 	
 	i->print = &printIpv4Protocol;
 	

@@ -49,7 +49,7 @@ void seeHex (struct File *f)
 	int i; /* index */
 
 	for (i = 0; i < f->length; ++i)
-		printf("hex: %x | uns: %u\n", *(f->data + i), *(f->data + i));
+		printf("%u. | hex: %x | uns: %u\n", i+1, *(f->data + i), *(f->data + i));
 }
 
 

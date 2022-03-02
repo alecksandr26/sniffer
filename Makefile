@@ -1,25 +1,26 @@
 C = clang
 CFLAGS = -g -W
 
-LIBS = lib/libpackage.so lib/libfile.so lib/libethernet.so lib/protocols.so
+LIBS = lib/libpackage.so lib/libfile.so lib/libethernet.so lib/protocols.so lib/libhelpers.so
 
-ETHER = src/ethernet/ethernet.c src/ethernet/pethernet.c
-ETHER_H = include/ethernet/ethernet.h include/ethernet/pethernet.h
-
-PROTO = src/protocols/arp.c src/protocols/ipv4.c
-PROTO_H = include/protocols/arp.h include/protocols/ipv4.h
+PROTO = src/protocols/arp.c src/protocols/ipv4.c src/protocols/icmp.c
+PROTO_H = include/protocols/arp.h include/protocols/ipv4.h include/protocols/icmp.h
 
 all: main
+
+lib/libfile.so: src/file.c include/file.h
+	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
+
+# Some extra usefull functions used by serveral dependencies
+lib/libhelpers.so: src/helpers.c include/helpers.h
+	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
 
 # Here are the libraries 
 lib/libpackage.so: src/package.c include/package.h
 	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
 
-lib/libfile.so: src/file.c include/file.h
+lib/libethernet.so: src/ethernet.c include/ethernet.h
 	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
-
-lib/libethernet.so: $(ETHER) $(ETHER_H)
-	$(C) $(CFLAGS) -fPIC -shared -lc $(ETHER) -o $@
 
 lib/protocols.so: $(PROTO) $(PROTO_H)
 	$(C) $(CFLAGS) -fPIC -shared -lc $(PROTO) -o $@ 
@@ -30,5 +31,3 @@ main: main.c $(LIBS)
 
 clean:
 	rm $(BINS) $(LIBS)
-
-

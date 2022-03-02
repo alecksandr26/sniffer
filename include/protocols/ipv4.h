@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "./protocolstransport.h"
+#include "protocolstransport.h"
 #include "../helpers.h"
 
 struct Ipv4 { /* 20 bytes */
@@ -27,6 +27,7 @@ struct Ipv4 { /* 20 bytes */
 	
 	byte *options;
 	byte *data; /* will points to the rest of bytes */
+	bool justHeader;
 
 	union ProtocolTransport protocolData;
 	
@@ -34,7 +35,8 @@ struct Ipv4 { /* 20 bytes */
 	void (*print) (struct Ipv4 *ip);
 };
 
-struct Ipv4 *Ipv4Package (byte *data);
+/* justHeader If only we want to print the header or all the package */
+struct Ipv4 *Ipv4Package (byte *data, bool justHeader);
 
 typedef struct Ipv4 Ipv4;
 

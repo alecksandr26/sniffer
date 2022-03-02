@@ -1,6 +1,22 @@
 /* Here I import my header file */
 #include "../include/package.h"
 
+/* defineProtocol: Is a function to define which protocol we are going to use */
+union Protocol defineProtocol (Ether *ether, byte *data)
+{
+	union Protocol p;	
+	switch (ether->etherType) {
+	case ARP_TYPE:
+		p.arp = ArpPackage(data);
+		break;
+	case IPV4_TYPE: /* We want to read the complete package */
+		p.ipv4 = Ipv4Package(data, false);
+		break;
+	}
+
+	return p;
+}
+
 /* printProtocol: This function will print the protocol */
 void printProtocol (Pak *package)
 {

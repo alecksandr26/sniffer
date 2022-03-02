@@ -1,5 +1,19 @@
 #include "../include/helpers.h"
 
+/* printDataInHex: To print a bunch of data in hex */
+void printDataInHex (byte *data, unsigned l)
+{
+	int j;
+	
+	printf("Data: ");
+	for (j = 0; j < l; j++) {
+		if (*(data + j) <= 15)
+			printf("0");
+		printf("%x", *(data + j));
+	}
+	printf("\n[Length: %u]\n", l);
+}
+
 /* flipData: Here we flip the bytes from data types  */
 byte *flipData (byte *data, unsigned l)
 {

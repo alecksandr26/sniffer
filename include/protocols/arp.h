@@ -11,9 +11,6 @@
 /* The amount types */
 #define AMOUNT_TYPES 4
 
-unsigned short PROTOCOL_TYPES_DECIMAL[AMOUNT_TYPES] = { 1544, 8, 129,	56710 };
-char *PROTOCOL_TYPES_STRING[AMOUNT_TYPES] = { "ARP", "IPV4", "VLAN", "IPV6" };
-
 /* The types of ethernet */
 enum PROTOCOL_TYPES {
 	ARP,

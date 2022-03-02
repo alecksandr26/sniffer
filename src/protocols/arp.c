@@ -1,6 +1,9 @@
 /* Here I include this thing */
 #include "../../include/protocols/arp.h"
 
+unsigned short PROTOCOL_TYPES_DECIMAL[AMOUNT_TYPES] = { 1544, 8, 129,	56710 };
+char *PROTOCOL_TYPES_STRING[AMOUNT_TYPES] = { "ARP", "IPV4", "VLAN", "IPV6" };
+
 /* defineOperationrequest: To know which operation the arp package is doing */
 enum REQUEST_REPLY defineOperationRequest (byte *request)
 {

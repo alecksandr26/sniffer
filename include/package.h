@@ -7,15 +7,17 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "protocols/protocols.h"
+#include "protocols/arp.h"
+#include "protocols/ipv4.h"
+
 #include "ethernet.h"
+#include "helpers.h"
 
-#ifndef __BYTE_DATA_
-#define __BYTE_DATA_
-/* This is necessary to create the buffers */
-typedef unsigned char byte;
-
-#endif
+/* This is the union that we are going to use to define the type of protocol */
+union Protocol {
+	Arp *arp;
+	Ipv4 *ipv4;
+};
 
 /* This class will mantine the data */
 struct Package {

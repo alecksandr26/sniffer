@@ -2,7 +2,7 @@
 
 char *TYPE_ICMP_STRING[] = {
 	"Echo Reply",
-	"Unreachable",
+	"Destination Unreachable",
 	"Redirect Message",
 	"Echo Request"
 };
@@ -10,7 +10,6 @@ char *TYPE_ICMP_STRING[] = {
 /* knowTypeOfIcmp: To know the type of icmp we have */
 enum TYPE_ICMP knowTypeOfIcmp (byte type)
 {
-	printf("%u\n", type);
 	switch (type) {
 	case 0:
 		return ECHO_REPLY;
@@ -35,15 +34,31 @@ void readDataIcmp (struct Icmp *i, byte *data)
 	memcpy(i->checkSum, data, 2);
 	data += 2;
 	
-	memcpy(i->identifier, data, 2);
-	data += 2;
+	if (i->type == 0 || i->type == 8) {
+		memcpy(i->identifier, data, 2);
+		data += 2;
 	
-	memcpy(i->sequenceNumber, data, 2);
-	data += 2;
-
+		memcpy(i->sequenceNumber, data, 2);
+		data += 2;
+		i->extraIpv4Package = false;
+		i->data = data;
+		return; /* Here we stop reading */	
+	}
+	else if (i->type == 5) {
+		memcpy(i->ipv4, data, 4);
+		data += 4;
+		i->extraIpv4Package = true;
+	}
+	else if (i->type == 3) {
+		data += 2; /* unused bytes */
+		memcpy(i->nextHopMTU, data, 2);
+		data += 2;
+		i->extraIpv4Package = true;
+	}
 	
-	if (i->typeI == ECHO_REPLY || i->typeI == ECHO_REQUEST)
-		return;
+	memcpy(i->ipv4Data, data, 20);
+	data += 20;
+	i->data = data;
 }
 
 /* printCodeIcmp: To print the type of code that we have */
@@ -118,22 +133,22 @@ void printIcmp (struct Icmp *i)
 	printHex(i->checkSum, 1);
 	puts(")");
 	
-	printf("Identifier: (%u)\n", (*(unsigned short *) flipData(i->identifier, 2)));
-	printf("Sequence Number: (%u)\n", (*(unsigned short *) flipData(i->sequenceNumber, 2)));
-	printf("Data: ");
 	if (i->typeI == ECHO_REPLY || i->typeI == ECHO_REQUEST) {
-		for (j = 0; j < i->length; j++) {
-			if (*(i->data + j) <= 15)
-				printf("0");
-			printf("%x", *(i->data + j));
-		}
+		printf("Identifier: (%u)\n", (*(unsigned short *) flipData(i->identifier, 2)));
+		printf("Sequence Number: (%u)\n", (*(unsigned short *) flipData(i->sequenceNumber, 2)));
+		printDataInHex(i->data, i->length);
+		return; /* Here we finish reading the data */
 	}
-	puts("");
+	else if (i->typeI == REDIRECT_MESSAGE)
+		printIpv4(i->ipv4, "Gateway");
+	
+	else if (i->typeI == UNREACHABLE)
+		printf("Next-hop MTU: %u\n", (*(unsigned short *) flipData(i->nextHopMTU, 4)));
 	puts("---------------------------------------");
 }
 
 /* Icmppackage: Build an icmp object data */
-struct Icmp *IcmpPackage (byte *data, unsigned short length)
+struct Icmp *IcmpPackage (byte *data, unsigned short length, void *(*Ipv4Package)(byte *data, bool justHeader))
 {
 	struct Icmp *i = (struct Icmp *) malloc(sizeof(struct Icmp));
 
@@ -141,13 +156,19 @@ struct Icmp *IcmpPackage (byte *data, unsigned short length)
 	i->identifier = (byte *) malloc(2);
 	i->sequenceNumber = (byte *) malloc(2);
 	i->ipv4 = (byte *) malloc(2);
-	i->length = length;
+	i->nextHopMTU = (byte *) malloc(2);
+	i->ipv4Data = (byte *) malloc(20);
+	
+	i->length = length - 8;
 	readDataIcmp(i, data);
-	i->data = data;
+
+	/* Here we read the data of the ipv4 header */
+	if (i->extraIpv4Package)
+		i->ipv4Package = Ipv4Package(i->ipv4Data, true);
 	
 	i->typeI = knowTypeOfIcmp(i->type);
-	
 	i->print = &printIcmp;
+	
 	
 	return i;
 }

@@ -14,6 +14,9 @@
 typedef unsigned char byte;
 #endif
 
+/* printDataInHex: To print a bunch of data in hex */
+void printDataInHex (byte *data, unsigned l);
+
 /*   printHex: This function will print in hex some buffer */
 void printHex (byte *hex, int l);
 

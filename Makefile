@@ -1,10 +1,10 @@
 C = clang
 CFLAGS = -g -W
 
-LIBS = lib/libpackage.so lib/libfile.so lib/libethernet.so lib/protocols.so lib/libhelpers.so
+LIBS = lib/libfile.so lib/libhelpers.so lib/libpackage.so lib/libethernet.so lib/libprotocols.so
 
-PROTO = src/protocols/arp.c src/protocols/ipv4.c src/protocols/icmp.c
-PROTO_H = include/protocols/arp.h include/protocols/ipv4.h include/protocols/icmp.h
+PROTO = src/protocols/*.c
+PROTO_H = include/protocols/*.h
 
 all: main
 
@@ -22,7 +22,7 @@ lib/libpackage.so: src/package.c include/package.h
 lib/libethernet.so: src/ethernet.c include/ethernet.h
 	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
 
-lib/protocols.so: $(PROTO) $(PROTO_H)
+lib/libprotocols.so: $(PROTO) $(PROTO_H)
 	$(C) $(CFLAGS) -fPIC -shared -lc $(PROTO) -o $@ 
 
 # To compile the main program 

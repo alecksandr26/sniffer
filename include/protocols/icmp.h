@@ -26,13 +26,16 @@ struct Icmp {
 	byte *ipv4; /* 4 bytes */
 	byte *data;
 	bool extraIpv4Package;
+	byte *nextHopMTU; /* 4 bytes */
+	byte *ipv4Data; /* 20 bytes */
+	void *ipv4Package; /* 20 bytes */
 	
 	/* print: To print this protocol */
 	void (*print) (struct Icmp *icmp);
 };
 
 /* IcmpPackage: To create the icmp object */
-struct Icmp *IcmpPackage (byte *data, unsigned short lenght);
+struct Icmp *IcmpPackage (byte *data, unsigned short lenght, void *(*Ipv4Package)(byte *data, bool justHeader));
 
 typedef struct Icmp Icmp;
 

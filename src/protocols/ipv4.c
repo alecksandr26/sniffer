@@ -1,5 +1,7 @@
 #include "../../include/protocols/ipv4.h"
 
+char *PROTOCOL_TRANSPORT_STRING[] = { "TCP", "UDP", "ICMP" };
+
 /* knowIpv4Protocol: Know which ipv4 protocol we are going to use */
 enum PROTOCOL_TRANSPORT knowIpv4Protocol (byte p)
 {
@@ -106,15 +108,19 @@ void printIpv4Protocol (struct Ipv4 *i)
 	printIpv4(i->desIpv4, "Destination");
 	puts("---------------------------------------");
 	/* Here print the rest of the procotol */
-	printIpv4ProtocolTransport(i->protocolData, i->protocolType);
+	if (!i->justHeader) {
+		printIpv4ProtocolTransport(i->protocolData, i->protocolType);
+		/* Here we print the ipv4 package inside of the icmp package */
+		if (i->protocolType == ICMP && i->protocolData.icmp->extraIpv4Package)
+			printIpv4Protocol((struct Ipv4 *) i->protocolData.icmp->ipv4Package);
+	}
 }
 
 /* Ipv4package: This function will create the ipv4 object */
-struct Ipv4 *Ipv4Package (byte *data)
+struct Ipv4 *Ipv4Package (byte *data, bool justHeader)
 {
 	struct Ipv4 *i = (struct Ipv4 *) malloc(sizeof(struct Ipv4));
 	unsigned short l;
-	
 
 	i->length = (byte *) malloc(2);
 	i->id = (byte *) malloc(2);
@@ -123,6 +129,7 @@ struct Ipv4 *Ipv4Package (byte *data)
 	i->srcIpv4 = (byte *) malloc(4);
 	i->desIpv4 = (byte *) malloc(4);
 	i->options = (byte *) malloc(40);
+	i->justHeader = justHeader; /* if we want to print just the header */
 	
 	readDataIpv4(i, data);
 	if (i->IHL < 6)
@@ -131,7 +138,8 @@ struct Ipv4 *Ipv4Package (byte *data)
 		l = (*((unsigned short *) i->length)) - (4 * (i->IHL - 5));
 	
 	/* Here we define the protocol that we have */
-	i->protocolData = defineProtocolTransport(i->protocolType, i->data, l);
+	if (!justHeader)
+		i->protocolData = defineProtocolTransport(i->protocolType, i->data, l, Ipv4Package);
 	
 	i->print = &printIpv4Protocol;
 	

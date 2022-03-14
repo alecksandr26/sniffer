@@ -14,7 +14,7 @@ struct Ipv4 { /* 20 bytes */
 	byte IHL; /* 4 bits */
 	byte TOS;
 	byte *length; 
-	byte *id; /* 2 bytes */
+	byte *id; /* identification 2 bytes */
 	byte flags; /* 3 bits */
 	byte *offset; /* 13 bits */
 	byte TTL;

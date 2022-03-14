@@ -85,7 +85,7 @@ bool isBroadCast (byte *data)
 	for (i = 0; i < 6; ++i)
 		sum += *(data + i);
 
-	return (sum == (255 * 6)) ? true : false;
+	return sum == (255 * 6);
 }
 
 /* readDataEthernet: To load all the data to the ethernet package */

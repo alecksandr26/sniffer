@@ -72,17 +72,17 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
 void printIpv4Flags (byte f)
 {
 	if (!(f & 0b00000001))
-		puts("    0. bit = 0 (Reserved)");
+		puts("\t0. bit = 0 (Reserved)");
 	
 	if (f & 0b00000010)
-		puts("    1. bit = 1 (Not divisible)");
+		puts("\t1. bit = 1 (Not divisible)");
 	else
-		puts("    1. bit = 0 (Divisible)");
+		puts("\t1. bit = 0 (Divisible)");
 	
 	if (f & 0b00000100)
-		puts("    2. bit = 1 (Intermediate Fragment)");
+		puts("\t2. bit = 1 (Intermediate Fragment)");
 	else
-		puts("    2. bit = 0 (Last Fragment)");
+		puts("\t2. bit = 0 (Last Fragment)");
 }
 
 
@@ -95,6 +95,7 @@ void printIpv4Protocol (struct Ipv4 *i)
 	printf("Internet Header length: (%u) bytes\n", i->IHL * 4);
 	printf("Type Of Service: (%u)\n", i->TOS);
 	printf("Total length: (%u) bytes\n", *((unsigned short *) i->length));
+	printf("Identification: (%u)\n", *((unsigned short *) i->id));
 	puts("\nFlags: ");
 	printIpv4Flags(i->flags);
 	printf("\nFragment Offset: (%u)\n", *((unsigned short *) i->offset));

@@ -9,6 +9,7 @@
 
 #include "protocols/arp.h"
 #include "protocols/ipv4.h"
+#include "protocols/ipv6.h"
 
 #include "ethernet.h"
 #include "helpers.h"
@@ -17,6 +18,7 @@
 union Protocol {
 	Arp *arp;
 	Ipv4 *ipv4;
+	Ipv6 *ipv6;
 };
 
 /* This class will mantine the data */

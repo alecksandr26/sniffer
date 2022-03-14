@@ -10,9 +10,15 @@
 #include "../helpers.h"
 
 struct Ipv6 {
+	/* This is the protocol type */
 	enum PROTOCOL_TRANSPORT protocolType;
 	bool justHeader;
-	
+
+	/* Here I save the protocol object */
+	union ProtocolTransport protocolData;
+
+	/* print: To print the protocol */
+	void (*print) (struct Ipv6 *ip);
 };
 
 /* Ipv6Package: To create a ipv6 package */

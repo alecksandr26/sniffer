@@ -12,6 +12,9 @@ union Protocol defineProtocol (Ether *ether, byte *data)
 	case IPV4_TYPE: /* We want to read the complete package */
 		p.ipv4 = Ipv4Package(data, false);
 		break;
+	case IPV6_TYPE:
+		p.ipv6 = Ipv6Package(data, false);
+		break;
 	}
 
 	return p;
@@ -21,12 +24,15 @@ union Protocol defineProtocol (Ether *ether, byte *data)
 void printProtocol (Pak *package)
 {
 	switch (package->ether->etherType) {
-		case ARP_TYPE: /* To print arp protocol */
-			package->protocol.arp->print(package->protocol.arp);
-			break;
-	    case IPV4_TYPE: /* To prin ipv4 prototcol */
-			package->protocol.ipv4->print(package->protocol.ipv4);
-			break;
+	case ARP_TYPE: /* To print arp protocol */
+		package->protocol.arp->print(package->protocol.arp);
+		break;
+	case IPV4_TYPE: /* To prin ipv4 prototcol */
+		package->protocol.ipv4->print(package->protocol.ipv4);
+		break;
+	case IPV6_TYPE:
+		package->protocol.ipv6->print(package->protocol.ipv6);
+		break;
 	}
 }
 

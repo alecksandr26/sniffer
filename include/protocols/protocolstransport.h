@@ -19,6 +19,6 @@ union ProtocolTransport {
 void printIpv4ProtocolTransport(union ProtocolTransport p, enum PROTOCOL_TRANSPORT pt);
 
 /* defineprotocoltransport: To define the protocol */
-union ProtocolTransport defineProtocolTransport (enum PROTOCOL_TRANSPORT protocol, byte *data, unsigned short length, void *(*Ipv4Package)(byte *data, bool justHeader));
+union ProtocolTransport defineProtocolTransport (enum PROTOCOL_TRANSPORT protocol, byte *data, unsigned short length, void *(*IpvPackage)(byte *data, bool justHeader));
 
 #endif

@@ -16,7 +16,7 @@ void printIpv4ProtocolTransport(union ProtocolTransport p, enum PROTOCOL_TRANSPO
 }
 
 /* defineprotocoltransport: To define the protocol */
-union ProtocolTransport defineProtocolTransport (enum PROTOCOL_TRANSPORT protocol, byte *data, unsigned short length, void *(*Ipv4Package)(byte *data, bool justHeader))
+union ProtocolTransport defineProtocolTransport (enum PROTOCOL_TRANSPORT protocol, byte *data, unsigned short length, void *(*IpvPackage)(byte *data, bool justHeader))
 {
 	union ProtocolTransport p;
 	
@@ -26,7 +26,7 @@ union ProtocolTransport defineProtocolTransport (enum PROTOCOL_TRANSPORT protoco
 	case UDP:
 		break;
 	case ICMP: /* Here we pass the function to create an ipv4 package */
-		p.icmp = IcmpPackage(data, length, Ipv4Package);
+		p.icmp = IcmpPackage(data, length, IpvPackage);
 		break;
 	}
 	

@@ -1,8 +1,5 @@
-
-
 /* Here we include the header file */
 #include "../include/file.h"
-
 
 /* std file */
 #include <stdio.h>
@@ -14,7 +11,6 @@
 
 /* The maximun size of a ethernet package */
 #define BUFSIZE 1518
-
 
 /* readFile: This function will read the whole file */
 void readFile (struct File *f)
@@ -40,9 +36,6 @@ void readFile (struct File *f)
 	f->length = n;
 }
 
-
-
-
 /* seeHex: prints the info in hex | unsiged */
 void seeHex (struct File *f)
 {
@@ -52,13 +45,11 @@ void seeHex (struct File *f)
 		printf("%u. | hex: %x | uns: %u\n", i+1, *(f->data + i), *(f->data + i));
 }
 
-
 /* deconstructor: To free all the memory */
 void deconstructor (struct File *f)
 {
     free(f->data);
 	free(f);
-    
 }
 
 /* File: Here I create the contructor that creates the file */
@@ -73,10 +64,8 @@ struct File *File (char *fileName)
 	f->seeHex = &seeHex;
 	f->deconstructor = &deconstructor;
 	
-	
 	readFile(f);
 
-	
 	return f;
 }
 

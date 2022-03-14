@@ -62,7 +62,7 @@ void readDataArp (byte *data, struct Arp *a)
 void printHardWareType (byte *type)
 {
 	printf("Hardware type: ");
-    printHex(type, 1);
+    printHex(type, 2);
 	printf(" (Ethernet)\n");
 }
 

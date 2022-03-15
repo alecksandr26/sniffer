@@ -9,7 +9,16 @@
 #include "protocolstransport.h"
 #include "../helpers.h"
 
+struct headerNode {
+	byte nextHeader;
+	byte headerExtensionLength;
+	unsigned headerIndex;
+};
+
 struct Ipv6 {
+	/* To create the linked list */
+	struct linkedList *l;
+	
 	/* This is the protocol type */
 	enum PROTOCOL_TRANSPORT protocolType;
 	bool justHeader;
@@ -17,6 +26,18 @@ struct Ipv6 {
 	/* Here I save the protocol object */
 	union ProtocolTransport protocolData;
 
+	byte version;
+	byte trafficClass;
+	byte *flowLabel; /* 3 bytes */
+	byte *payloadLength; /* 2 bytes */
+	byte nextHeader;
+	byte hopLimit;
+	byte *sourceAddress; /* 16 bytes */
+	byte *destinationAddress; /* 16 bytes */
+
+	int headerIndex; /* This is the index to the */
+	bool headerList;
+	
 	/* print: To print the protocol */
 	void (*print) (struct Ipv6 *ip);
 };

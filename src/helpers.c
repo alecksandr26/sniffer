@@ -1,5 +1,68 @@
 #include "../include/helpers.h"
 
+/* initlinkedlist: To create a linked list */
+struct linkedList *initLinkedList ()
+{
+	struct linkedList *l = (struct linkedList *) malloc(sizeof(struct linkedList));
+	l->len = 0;
+	l->head = NULL;
+	l->tail = NULL;
+	return l;
+}
+
+/* pushlinkedlist: To push one element inside of the list */
+void pushLinkedList (struct linkedList *i, void *data)
+{
+	struct node *n = (struct node *) malloc(sizeof(struct node));
+	n->prev = NULL;
+	n->next = NULL;
+	n->data = data;
+	
+	if (i->len == 0) {
+		i->head = n;
+		i->tail = n;
+	} else {
+		i->head->next = n;
+		n->prev = i->head;
+		i->head = n;
+	}
+
+	i->len++;
+}
+
+/* deleteElement: To delete one element from the linked list */
+void deleteElementLinkedList (struct linkedList *i, void *data)
+{
+	struct node *aux;
+
+	aux = i->tail;
+	while (aux != NULL) {
+		if (aux->data == data) {
+			if (aux->next != NULL)
+				aux->next->prev = aux->prev;
+			if (aux->prev != NULL)
+				aux->prev->next = aux->next;
+			free(aux->data);
+			free(aux);
+			return;
+		}
+		aux = aux->next;
+	}
+}
+
+/* printIpv6: To print the ipv6 */
+void printIpv6 (byte *ip, char *type)
+{
+	/* The address was */
+	char *addr = (char *) malloc(INET_ADDRSTRLEN);
+
+	/* Here we catch the ipv6 */
+	inet_ntop(AF_INET6, ip, addr, INET6_ADDRSTRLEN);
+
+	printf("%s: %s\n", type, addr);
+	free(addr);
+}
+
 /* printDataInHex: To print a bunch of data in hex */
 void printDataInHex (byte *data, unsigned l)
 {

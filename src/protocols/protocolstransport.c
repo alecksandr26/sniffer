@@ -1,6 +1,5 @@
 #include "../../include/protocols/protocolstransport.h"
 
-
 /* printipv4protocoltransport: Prints the protocol inside of ipv4 */
 void printIpv4ProtocolTransport(union ProtocolTransport p, enum PROTOCOL_TRANSPORT pt)
 {

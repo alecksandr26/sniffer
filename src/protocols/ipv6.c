@@ -137,8 +137,8 @@ void printNextHeader (struct Ipv6 *i)
 	aux = i->l->tail;
 	while (aux != NULL) {
 		node = (struct headerNode *) aux->data;
-		printf("Next header: %s\n", headerListString[node->headerIndex]);
-		printf("Header extension length: %u\n", node->headerExtensionLength);
+		printf("Next header: (%s)\n", headerListString[node->headerIndex]);
+		printf("Header extension length: (%u)\n", node->headerExtensionLength);
 		aux = aux->next;
 	}
 }

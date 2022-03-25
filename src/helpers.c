@@ -105,6 +105,7 @@ void printIpv4 (byte *ipv4, char *type)
 			printf("%u.", *(ipv4 + i));
 	}
 }
+
 /*   printHex: This function will print in hex some buffer */
 void printHex (byte *hex, int l)
 {

@@ -4,15 +4,18 @@
 #include <stdio.h>
 
 #include "icmp.h"
+#include "icmpv6.h"
 
 enum PROTOCOL_TRANSPORT {
 	TCP,
 	UDP,
-	ICMP
+	ICMP,
+	ICMPV6
 };
 
 union ProtocolTransport {
 	Icmp *icmp;
+	Icmpv6 *icmpv6;
 };
 
 /* printipv4protocoltransport: Prints the protocol inside of ipv4 */

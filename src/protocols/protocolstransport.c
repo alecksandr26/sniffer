@@ -11,6 +11,10 @@ void printIpv4ProtocolTransport(union ProtocolTransport p, enum PROTOCOL_TRANSPO
 	case ICMP:
 		p.icmp->print(p.icmp);
 		break;
+		
+	case ICMPV6:
+		p.icmpv6->print(p.icmpv6);
+		break;
 	}
 }
 
@@ -26,6 +30,9 @@ union ProtocolTransport defineProtocolTransport (enum PROTOCOL_TRANSPORT protoco
 		break;
 	case ICMP: /* Here we pass the function to create an ipv4 package */
 		p.icmp = IcmpPackage(data, length, IpvPackage);
+		break;
+	case ICMPV6:
+		p.icmpv6 = Icmpv6Package(data, length, IpvPackage);
 		break;
 	}
 	

@@ -37,6 +37,8 @@ struct Ipv6 {
 
 	int headerIndex; /* This is the index to the */
 	bool headerList;
+
+	byte *data; /* The data byte pointer */
 	
 	/* print: To print the protocol */
 	void (*print) (struct Ipv6 *ip);

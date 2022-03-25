@@ -9,7 +9,7 @@ char *headerListString[] = {"Hop-by-Hop", "TCP", "UDP", "Routing",
 bool isProtocolIpv6 (int p)
 {
 	switch (p) {
-	case 58: /* ipv6 */
+	case 58: /* icmpv6 */
 		return true;
 		break;
 		
@@ -29,6 +29,16 @@ int defineNextHeader (int next)
 			return i;
 	
 	return -1;
+}
+
+/* defineIpv6ProtocolType: To know the protocol that we are going to use */
+enum PROTOCOL_TRANSPORT defineIpv6ProtocolType (byte p)
+{
+	switch (p) {
+	case 58: /* If it is an icmpv6 protocol */
+		return ICMPV6;
+		break;
+	}
 }
 
 /* readNextHeader: To read the headers from the package */
@@ -53,6 +63,9 @@ void readNextHeader (struct Ipv6 *i, byte *data)
 		/* Here I pusht the item to the list */
 		pushLinkedList(i->l, h);
 	}
+
+	i->protocolType = defineIpv6ProtocolType(nextHeader);
+	i->data = data; /* To catch the pointer */
 }
 
 /* readIpv6protocol: To read all the data from the package */
@@ -156,19 +169,25 @@ void printIpv6Protocol (struct Ipv6 *i)
 	printf("Hop Limit: (%u)\n", i->hopLimit);
 	printIpv6(i->sourceAddress, "Source Address");
 	printIpv6(i->destinationAddress, "Destination Address");
-	if (i->headerList) {
+	if (i->headerList && !i->justHeader) {
 		puts("\nExtension headers: ");
 		printNextHeader(i);
 	}
 	puts("---------------------------------------");
-}
 
+	if (!i->justHeader) {
+		i->protocolData.icmpv6->print(i->protocolData.icmpv6);
+		if (i->protocolData.icmpv6->extraPackage)
+			i->print(i->protocolData.icmpv6->dataIpv6Package);
+	}
+}
 
 /* Ipv6Package: To create ipv6 package */
 struct Ipv6 *Ipv6Package (byte *data, bool justHeader)
 {
 	struct Ipv6 *i = (struct Ipv6 *) malloc(sizeof(struct Ipv6));
 
+	i->justHeader = justHeader;
 	i->flowLabel = (byte *) malloc(3);
 	i->payloadLength = (byte *) malloc(2);
 	i->sourceAddress = (byte *) malloc(16);
@@ -179,6 +198,9 @@ struct Ipv6 *Ipv6Package (byte *data, bool justHeader)
 
 	/* Here we read the protocol */
 	readIpv6Protocol(i, data);
+	
+	if (!justHeader)
+		i->protocolData = defineProtocolTransport(i->protocolType, i->data, i->payloadLength, Ipv6Package);
 	
 	i->print = &printIpv6Protocol;
 	

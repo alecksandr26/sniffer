@@ -62,7 +62,7 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
 	memcpy(i->desIpv4, data, 4); /* The destination ipv4 */
 	data += 4;
 
-	if (i->IHL > 5)
+	if (i->IHL == 5)
 		i->data = data; /* After reading the whole data we put the rest here */
 	else
 		i->data = data + ((i->IHL - 5) * 4);

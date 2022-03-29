@@ -10,6 +10,8 @@ struct Option {
 	int typeOption;
 	byte len;
 	struct Option *next;
+	byte *macAddress; /* 6 bytes */
+	byte *mtu; /* 4 bytes */
 };
 
 enum TYPE_OPTIONS_ICMPV6 {

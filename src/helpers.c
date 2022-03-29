@@ -134,7 +134,6 @@ void printMacAddress (byte *address, bool broadCast, char *macName)
 			printf("0");
 		printf("%x:", *(address + i));
 	}
-
 	if (broadCast) {
 		if (*(address + i) < 16)
 			printf("0");

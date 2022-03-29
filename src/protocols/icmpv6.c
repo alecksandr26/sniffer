@@ -152,6 +152,22 @@ struct NDP *redirectMessageReadData (byte *data, struct NDP *rm)
 	return rm;
 }
 
+/* readOption: To read the option */
+void readOption (byte *data, enum TYPE_OPTIONS_ICMPV6 type, struct Option *op)
+{
+	switch (type) {
+	case SOURCE_LINK_LAYER_ADDRESS_ICMPV6: case TARGET_LINK_LAYER_ADDRESS_ICMPV6:
+		op->macAddress = (byte *) malloc(6);
+		memcpy(op->macAddress, data, 6);
+		break;
+	case REDIRECT_MTU_ICMPV6:
+		op->mtu = (byte *) malloc(4);
+		memcpy(op->mtu, data, 4);
+		op->mtu = flipData(op->mtu, 3);
+		break;
+	}
+}
+
 /* readOptions: To read the options and the dumpt it into the struct */
 unsigned readOptions (byte *data, struct NDP *ndp)
 {
@@ -163,7 +179,6 @@ unsigned readOptions (byte *data, struct NDP *ndp)
 	type = *data; /* The first byte and the first type of options */
 	data++;
 	prev = NULL;
-	num = 0;
 	while ((typeOption = knowTypeOfOptionIcmpv6(type)) != -1) {
 		
 		op = (struct Option *) malloc(sizeof(struct Option));
@@ -177,9 +192,12 @@ unsigned readOptions (byte *data, struct NDP *ndp)
 		op->typeOption = typeOption;
 		op->type = type;
 		
+		/* read the option */
+		readOption(data + 1, typeOption, op);
+		
 		op->len = *data * 8;
 		data += op->len - 1; /* we move the amount of bytes plus 1 */
-		num += op->len + 1;
+		num += op->len - 1;
 		
 		type = *data; /* Here we take the new byte */
 		data++;
@@ -200,7 +218,7 @@ void knowAndReadNDPProtocol (byte *data, struct Icmpv6 *i)
 	switch (i->type) {
 	case 136:
 	    i->ndp = neighborAdverstisementReadData(data, i->ndp);
-		data += 17;
+		data += 20;
 		break;
 	case 134:
 		i->ndp = routerAdvertisementReadData(data, i->ndp);
@@ -215,7 +233,7 @@ void knowAndReadNDPProtocol (byte *data, struct Icmpv6 *i)
 		data += 36;
 		break;
 	}
-	
+	i->data = data;
 	i->data += readOptions(data, i->ndp);
 }
 
@@ -354,8 +372,20 @@ void printNDPOptions (struct Option *op)
 	if (op != NULL)
 		puts("Options:");
 	while (op != NULL) {
-		printf("\tOption: (%u) (%s)\n", op->type, TYPE_ICMPV6_OPTIONS_STRING[op->typeOption]);
-		printf("\tLength: (%u) bytes\n", op->len);
+		printf("Option: (%u) (%s)\n", op->type, TYPE_ICMPV6_OPTIONS_STRING[op->typeOption]);
+		printf("Length: (%u) bytes\n", op->len);
+		switch (op->typeOption) {
+		case SOURCE_LINK_LAYER_ADDRESS_ICMPV6:
+			printMacAddress(op->macAddress, false, "Source");
+			break;
+		case TARGET_LINK_LAYER_ADDRESS_ICMPV6:
+			printMacAddress(op->macAddress, false, "Target");
+			break;
+		case REDIRECT_MTU_ICMPV6:
+			printf("Mtu: (%u) bytes\n", *((unsigned *) op->mtu));
+			break;
+		}
+		
 		op = op->next;
 	}
 }

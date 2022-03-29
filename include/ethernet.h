@@ -64,6 +64,7 @@ struct EtherPackage {
 	unsigned short length; /* the amount of data */
     
     byte *frameCheck;    /* Frame check | 4 bytes */
+	bool isFrameCheck; /* To know if we really have the frame check or not */
 	
 	/* print: We are going to print the data as ethernet */
 	void (*print) (struct EtherPackage *etherdata);

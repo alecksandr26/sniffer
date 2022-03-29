@@ -19,7 +19,7 @@ void main (int argc, char *argv[])
 	// f->seeHex(f);
 
 	/* basically we load the package */
-	Pak *pack = Package(f->data, f->length - 18);
+	Pak *pack = Package(f->data, f->length);
 
 	/* To free al the memory */
 	f->deconstructor(f);

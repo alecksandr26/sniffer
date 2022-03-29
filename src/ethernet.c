@@ -70,6 +70,7 @@ void printDataEthernet (struct EtherPackage *e)
 	printf("Frame Check Secure: (");
 	printHex(e->frameCheck, 3);
 	puts(")");
+	
 	puts("---------------------------------------");
 }
 
@@ -88,9 +89,26 @@ bool isBroadCast (byte *data)
 	return sum == (255 * 6);
 }
 
+/* checkTheSecureSum: To know if the sum check is correct */
+bool checkTheSecureSum (unsigned frameCheck, byte *data, unsigned len)
+{
+	unsigned i, test;
+	
+
+	test = 0;
+	printf("%u\n", *data);
+	for (i = 0; i < len; ++i)
+		test += *(data + i);
+	printf("%u\n", *(data + i - 1));
+	printf("%u == %u\n", frameCheck, test * (len - 19));
+	return frameCheck == test;
+}
+
 /* readDataEthernet: To load all the data to the ethernet package */
 void readDataEthernet (struct EtherPackage *e, byte *data)
 {
+	byte *checkData = data;
+	
 	/* Read the mac address dest */
     memcpy(e->macaddressDes, data, sizeof(byte) * 6);
 	data += 6; /* move 6 steps */
@@ -103,14 +121,13 @@ void readDataEthernet (struct EtherPackage *e, byte *data)
     memcpy(e->ethernetTypeBytes, data, sizeof(byte) * 2);
 	data += 2; /* move 2 steps */
 
-	/* Read the data */
-	memcpy(e->data, data, sizeof(byte) * e->length);
+	/* Catch the pointer */
+	e->data = data;
 	data += e->length;
 	
 	/* Read the secure check */
 	memcpy(e->frameCheck, data, sizeof(byte) * 4);
-
-
+	
 	/* Try to know if the mac address is broadcast */
 	e->broadCastDes = isBroadCast(e->macaddressDes);
 	
@@ -137,7 +154,7 @@ struct EtherPackage *Ethernet (byte *data, unsigned short length)
 	struct EtherPackage *e = (struct EtherPackage *) malloc(sizeof(struct EtherPackage));
 
 	/* Here I load the data */
-	e->length = length;
+	e->length = length - 18; /* it is possible that we don't have that frame check */
 	e->ethernetTypeBytes = (byte *) malloc(2);
 	e->macaddressDes = (byte *) malloc(6);
 	e->macaddressSor = (byte *) malloc(6);

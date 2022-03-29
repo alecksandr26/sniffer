@@ -1,5 +1,15 @@
 #include "../../include/protocols/icmpv6.h"
 
+char *TYPE_ICMPV6_OPTIONS_STRING[] = {
+	"Nonce",
+	"Source Link Layer Address",
+	"Target Link Layer Address",
+	"Prefix Information",
+	"Redirect Header",
+	"Redirect Mtu",
+	"Recursive Dns Server"
+};
+
 char *TYPE_ICMPV6_STRING[] = {
 	"Destination Unreachable",
 	"Time Exceeded",
@@ -12,6 +22,30 @@ char *TYPE_ICMPV6_STRING[] = {
 	"Redirect Message",
 	"Unassigned"
 };
+
+/* knowTypeOfOptionIcmpv6: to know the type of the option */
+int knowTypeOfOptionIcmpv6 (byte type)
+{
+	switch (type) {
+	case 1:
+		return SOURCE_LINK_LAYER_ADDRESS_ICMPV6;
+	case 2:
+		return TARGET_LINK_LAYER_ADDRESS_ICMPV6;
+	case 3:
+		return PREFIX_INFORMATION_ICMPV6;
+	case 4:
+		return REDIRECT_HEADER_ICMPV6;
+	case 5:
+		return REDIRECT_MTU_ICMPV6;
+	case 17:
+		return NONCE_ICMPV6;
+	case 25:
+		return RECURSIVE_DNS_SERVER_ICMPV6;
+	default:
+		return -1;
+	}
+}
+	
 
 /* knowTypeOfIcmpv6: To know the icmpv6 protocol */
 enum TYPE_ICMPV6 knowTypeOfIcmpv6 (byte type)
@@ -41,9 +75,8 @@ enum TYPE_ICMPV6 knowTypeOfIcmpv6 (byte type)
 }
 
 /* neighborAdverstisementReadData: To read the data of the protocol */
-struct neighborAdvertisement *neighborAdverstisementReadData (byte *data)
+struct NDP *neighborAdverstisementReadData (byte *data, struct NDP *na)
 {
-	struct neighborAdvertisement *na = (struct neighborAdvertisement *) malloc(sizeof(struct neighborAdvertisement));
 	/* flags */
 	memcpy(&(na->flags), data, 1);
 	data += 4;
@@ -58,10 +91,8 @@ struct neighborAdvertisement *neighborAdverstisementReadData (byte *data)
 }
 
 /* routerAdvertisementReadData: To read the data of the router advertisement header */
-struct routerAdvertisement *routerAdvertisementReadData (byte *data)
-{
-	struct routerAdvertisement *ra = (struct routerAdvertisement *) malloc(sizeof(struct routerAdvertisement));
-	
+struct NDP *routerAdvertisementReadData (byte *data, struct NDP *ra)
+{	
 	/* cur hop limit */
 	memcpy(&(ra->curHopLimit), data, 1);
 	data++;
@@ -92,10 +123,8 @@ struct routerAdvertisement *routerAdvertisementReadData (byte *data)
 }
 
 /* neighborSolicitationReadData: To read the header */
-struct neighborSolicitation *neighborSolicitationReadData (byte *data)
+struct NDP *neighborSolicitationReadData (byte *data, struct NDP *ns)
 {
-	struct neighborSolicitation *ns = (struct neighborSolicitation *) malloc(sizeof(struct neighborSolicitation));
-
 	ns->targetAddress = (byte *) malloc(sizeof(16));
 	
 	data += 4;
@@ -106,10 +135,9 @@ struct neighborSolicitation *neighborSolicitationReadData (byte *data)
 	return ns;
 }
 
-struct redirectMessage *redirectMessageReadData (byte *data)
+/* redirectMessageReadData: To read the header of the redirect message */
+struct NDP *redirectMessageReadData (byte *data, struct NDP *rm)
 {
-	struct redirectMessage *rm = (struct redirectMessage *) malloc(sizeof(struct redirectMessage));
-
 	data += 4;
 
 	rm->destinationAddress = (byte *) malloc(16);
@@ -124,26 +152,71 @@ struct redirectMessage *redirectMessageReadData (byte *data)
 	return rm;
 }
 
+/* readOptions: To read the options and the dumpt it into the struct */
+unsigned readOptions (byte *data, struct NDP *ndp)
+{
+	int typeOption;
+	unsigned num;
+	byte type;
+	struct Option *op, *prev;
+
+	type = *data; /* The first byte and the first type of options */
+	data++;
+	prev = NULL;
+	num = 0;
+	while ((typeOption = knowTypeOfOptionIcmpv6(type)) != -1) {
+		
+		op = (struct Option *) malloc(sizeof(struct Option));
+		op->next = NULL;
+		if (prev != NULL)
+			prev->next = op;
+		else {
+			ndp->tail = op;
+			num = 1;
+		}
+		op->typeOption = typeOption;
+		op->type = type;
+		
+		op->len = *data * 8;
+		data += op->len - 1; /* we move the amount of bytes plus 1 */
+		num += op->len + 1;
+		
+		type = *data; /* Here we take the new byte */
+		data++;
+		num++;
+		
+		/* Here we catch the previos one */
+		prev = op;
+	}
+
+	return num;
+}
+
+/* knowAndreadNDPProtocol: To know which type of the ndp protocol we were using and read it*/
 void knowAndReadNDPProtocol (byte *data, struct Icmpv6 *i)
 {
+	i->ndp = (struct NDP *) malloc(sizeof(struct NDP));
+	
 	switch (i->type) {
 	case 136:
-	    i->ndp.na = neighborAdverstisementReadData(data);
-		i->data += 17;
+	    i->ndp = neighborAdverstisementReadData(data, i->ndp);
+		data += 17;
 		break;
 	case 134:
-		i->ndp.ra = routerAdvertisementReadData(data);
-		i->data += 12;
+		i->ndp = routerAdvertisementReadData(data, i->ndp);
+		data += 12;
 		break;
 	case 135:
-		i->ndp.ns = neighborSolicitationReadData(data);
-		i->data += 20;
+		i->ndp = neighborSolicitationReadData(data, i->ndp);
+		data += 20;
 		break;
 	case 137:
-		i->ndp.rm = redirectMessageReadData(data);
-		i->data += 36;
+		i->ndp = redirectMessageReadData(data, i->ndp);
+		data += 36;
 		break;
 	}
+	
+	i->data += readOptions(data, i->ndp);
 }
 
 /* readIcmpv6Package: To read the icmpv6 package */
@@ -220,7 +293,7 @@ char *stringCodeIcmpv6 (int type, byte code)
 }
 
 /* printNeighborAdvertisement: To print an na protocol */
-void printNeighborAdvertisement (struct neighborAdvertisement *na)
+void printNeighborAdvertisement (struct NDP *na)
 {	
 	/* Flags */
 	puts("Flags: ");
@@ -243,7 +316,7 @@ void printNeighborAdvertisement (struct neighborAdvertisement *na)
 }
 
 /* printRouterAdverstisement: To print the router advertisement header */
-void printRouterAdverstisement (struct routerAdvertisement *ra)
+void printRouterAdverstisement (struct NDP *ra)
 {
     printf("Cur Hop Limit: (%u)\n", ra->curHopLimit);
 	puts("Flags:");
@@ -263,35 +336,49 @@ void printRouterAdverstisement (struct routerAdvertisement *ra)
 }
 
 /* printNeighborSolicitation: To print the neighbor solicitation */
-void printNeighborSolicitation (struct neighborSolicitation *ns)
+void printNeighborSolicitation (struct NDP *ns)
 {
 	printIpv6(ns->targetAddress, "Target Address");
 }
 
 /* printRedirectMessage: To print the redirect message */
-void printRedirectMessage (struct redirectMessage *rm)
+void printRedirectMessage (struct NDP *rm)
 {
 	printIpv6(rm->targetAddress, "Target Address");
 	printIpv6(rm->destinationAddress, "Destination Address");
 }
 
+/* printNDPOptions: To print the options */
+void printNDPOptions (struct Option *op)
+{
+	if (op != NULL)
+		puts("Options:");
+	while (op != NULL) {
+		printf("\tOption: (%u) (%s)\n", op->type, TYPE_ICMPV6_OPTIONS_STRING[op->typeOption]);
+		printf("\tLength: (%u) bytes\n", op->len);
+		op = op->next;
+	}
+}
+
 /* printNDPProtocol: To prin the ndp protocol */
-void printNDPProtocol (union NDP ndp, byte type)
+void printNDPProtocol (struct NDP *ndp, byte type)
 {
     switch (type) {
 	case 136:
-	    printNeighborAdvertisement(ndp.na);
+	    printNeighborAdvertisement(ndp);
 		break;
 	case 134:
-	    printRouterAdverstisement(ndp.ra);
+	    printRouterAdverstisement(ndp);
 		break;
 	case 135:
-		printNeighborSolicitation(ndp.ns);
+		printNeighborSolicitation(ndp);
 		break;
 	case 137:
-		printRedirectMessage(ndp.rm);
+		printRedirectMessage(ndp);
 		break;
     }
+
+	printNDPOptions(ndp->tail);
 }
 
 /* printIcmpv6: To print the icmp */
@@ -309,8 +396,6 @@ void printIcmpv6 (struct Icmpv6 *i)
 	else if (i->type == 128 || i->type == 129) {
 		printf("Identifier: (%u)\n", *((unsigned short *) i->identifier));
 		printf("Sequence Number: (%u)\n", *((unsigned short *) i->sequenceNumber));
-	} else if (i->type == 1) {
-		
 	}
 		
 	puts("---------------------------------------");

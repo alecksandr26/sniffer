@@ -5,33 +5,37 @@
 #include <string.h>
 #include "../helpers.h"
 
-struct neighborAdvertisement {
-	byte flags;
-	byte *targetAddress; /* 16 bytes */
+struct Option {
+	byte type;
+	int typeOption;
+	byte len;
+	struct Option *next;
 };
 
-struct routerAdvertisement {
-	byte curHopLimit;
+enum TYPE_OPTIONS_ICMPV6 {
+	NONCE_ICMPV6,
+	SOURCE_LINK_LAYER_ADDRESS_ICMPV6,
+	TARGET_LINK_LAYER_ADDRESS_ICMPV6,
+	PREFIX_INFORMATION_ICMPV6,
+	REDIRECT_HEADER_ICMPV6,
+	REDIRECT_MTU_ICMPV6,
+	RECURSIVE_DNS_SERVER_ICMPV6
+};
+
+struct NDP {
+	/* neighborAdvertisement */
 	byte flags;
+	byte *targetAddress; /* 16 bytes */
+	
+	/* routerAdvertisement */
+	byte curHopLimit;
 	byte *lifetime; /* 2 bytes | seconds */
 	byte *reachableTime; /* 4 bytes | mili seconds */
 	byte *retransTimer; /* 4 bytes | mili seconds */
-};
 
-struct neighborSolicitation {
-	byte *targetAddress; /* 16 bytes */
-};
-
-struct redirectMessage {
-	byte *targetAddress; /* 16 bytes */
+	/* redirectMessage */
 	byte *destinationAddress; /* 16 bytes */
-};
-
-union NDP {
-	struct neighborAdvertisement *na;
-	struct routerAdvertisement *ra;
-	struct neighborSolicitation *ns;
-	struct redirectMessage *rm;
+	struct Option *tail;
 };
 
 enum TYPE_ICMPV6 {
@@ -64,7 +68,7 @@ struct Icmpv6 {
 	void *(*Ipv6Package) (byte *data, bool justHeader);
 	
 	enum TYPE_ICMPV6 typeNum;
-	union NDP ndp; /* To select the protocol */
+	struct NDP *ndp; /* To select the protocol */
 	
 	void (*print) (struct Icmpv6 *icmpv6);
 };

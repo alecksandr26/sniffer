@@ -12,6 +12,7 @@ union Protocol defineProtocol (Ether *ether, byte *data)
 	case IPV4_TYPE: /* We want to read the complete package */
 		p.ipv4 = Ipv4Package(data, false);
 		break;
+
 	case IPV6_TYPE:
 		p.ipv6 = Ipv6Package(data, false);
 		break;

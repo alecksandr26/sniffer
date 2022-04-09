@@ -180,8 +180,7 @@ struct Icmp *IcmpPackage (byte *data, unsigned short length, void *(*Ipv4Package
 	
 	i->typeI = knowTypeOfIcmp(i->type);
 	i->print = &printIcmp;
-	
-	
+
 	return i;
 }
 

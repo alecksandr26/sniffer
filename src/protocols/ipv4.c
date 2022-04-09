@@ -24,10 +24,10 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
 	
 	memcpy(&(i->IHL), data, 1); /* Header length */
 	i->IHL &= 0b00001111;
-	data++;
+	data += 1;
 
 	memcpy(&(i->TOS), data, 1); /* Type of service */
-	data++;
+	data += 1;
 
 	memcpy(i->length, data, 2); /* Total length */
 	i->length = flipData(i->length, 2);

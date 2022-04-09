@@ -89,7 +89,6 @@ byte *flipData (byte *data, unsigned l)
 	free(data);
    
 	return temp;
-
 }
 
 /* printIpv4: To print the Ipv4 */

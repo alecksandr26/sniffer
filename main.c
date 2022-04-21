@@ -1,8 +1,10 @@
 /* Standart libraries */
 #include <stdio.h>
 
-/* Import my of my dependencies */
+/* Import my of my module package */
 #include "include/package.h"
+
+/* My dependency of file */
 #include "include/file.h"
 
 void main (int argc, char *argv[])

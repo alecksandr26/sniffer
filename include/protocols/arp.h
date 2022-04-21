@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../helpers.h"
+#include "../helpers/helpers.h"
 
 /* The amount types */
 #define AMOUNT_TYPES 4

@@ -12,7 +12,7 @@
 #include "protocols/ipv6.h"
 
 #include "ethernet.h"
-#include "helpers.h"
+#include "./helpers/helpers.h"
 
 /* This is the union that we are going to use to define the type of protocol */
 union Protocol {

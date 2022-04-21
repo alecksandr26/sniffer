@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "protocolstransport.h"
-#include "../helpers.h"
+#include "../helpers/helpers.h"
 
 struct Ipv4 { /* 20 bytes */
 	byte version; /* 4 bits */

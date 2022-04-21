@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../helpers.h"
+#include "../helpers/helpers.h"
 
 struct Option {
 	byte type;

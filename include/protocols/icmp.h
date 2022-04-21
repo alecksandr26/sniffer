@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "../helpers.h"
+#include "../helpers/helpers.h"
 
 enum TYPE_ICMP {
 	ECHO_REPLY,

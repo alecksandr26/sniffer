@@ -5,7 +5,7 @@
 #include "include/package.h"
 
 /* My dependency of file */
-#include "include/file.h"
+#include "include/helpers/file.h"
 
 void main (int argc, char *argv[])
 {

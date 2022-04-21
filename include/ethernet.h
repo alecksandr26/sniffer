@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "../include/helpers.h"
+#include "./helpers/helpers.h"
 
 #ifndef __BYTE_DATA_
 #define __BYTE_DATA_

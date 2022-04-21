@@ -8,11 +8,11 @@ PROTO_H = include/protocols/*.h
 
 all: main
 
-lib/libfile.so: src/file.c include/file.h
+lib/libfile.so: src/helpers/file.c include/helpers/file.h
 	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
 
 # Some extra usefull functions used by serveral dependencies
-lib/libhelpers.so: src/helpers.c include/helpers.h
+lib/libhelpers.so: src/helpers/helpers.c include/helpers/helpers.h
 	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
 
 # Here are the libraries 

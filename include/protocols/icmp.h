@@ -21,18 +21,19 @@ struct Icmp {
 	byte type;
 	enum TYPE_ICMP typeI;
 	byte code;
-	byte *checkSum; /* 2 bytes */
-	byte *identifier; /* 2 bytes */
-	byte *sequenceNumber; /* 2 bytes */
-	byte *ipv4; /* 4 bytes */
+	byte checkSum[2]; /* 2 bytes */
+	byte identifier[2]; /* 2 bytes */
+	byte sequenceNumber[2]; /* 2 bytes */
+	byte ipv4[4]; /* 4 bytes */
 	byte *data;
 	bool extraIpv4Package;
-	byte *nextHopMTU; /* 4 bytes */
-	byte *ipv4Data; /* 20 bytes */
+	byte nextHopMTU[4]; /* 4 bytes */
+	byte ipv4Data[20]; /* 20 bytes */
 	void *ipv4Package; /* 20 bytes */
 	
 	/* print: To print this protocol */
 	void (*print) (struct Icmp *icmp);
+    void (*deconstruct) (struct Icmp *icmp);
 };
 
 /* IcmpPackage: To create the icmp object */

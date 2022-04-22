@@ -7,7 +7,7 @@
 /* My dependency of file */
 #include "include/helpers/file.h"
 
-void main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
 	if (argc > 2 || argc < 2) {
 		fprintf(stderr, "%s: Error: we need a file\n", argv[0]);
@@ -23,9 +23,15 @@ void main (int argc, char *argv[])
 	/* basically we load the package */
 	Pak *pack = Package(f->data, f->length);
 
-	/* To free al the memory */
-	f->deconstructor(f);
-	
 	/* To print the protocol */
 	pack->print(pack);
+
+
+    /* Here we are going to destroy all the object */
+    pack->deconstructor(pack);
+
+	/* To free al the memory */
+	f->deconstructor(f);
+
+    return 0;
 }

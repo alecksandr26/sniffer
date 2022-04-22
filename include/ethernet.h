@@ -44,16 +44,16 @@ enum ETHER_TYPES {
 
 /* This is the struct to save the ether data */
 struct EtherPackage {
-	byte *ethernetTypeBytes;    /* Ethernet data type | 2 bytes */
+	byte ethernetTypeBytes[2];    /* Ethernet data type | 2 bytes */
 	enum ETHER_TYPES etherType;
 	
-    byte *macaddressDes;   /* Mac address Destination | 6 bytes */
+    byte macaddressDes[6];   /* Mac address Destination | 6 bytes */
     /* The data of the first mac address */
 	enum UNI_MULTI lastbitDes;
     enum GLOB_LOCA penultimatebitDes;
 	bool broadCastDes;
 	
-    byte *macaddressSor;   /* Mac address Source | 6 bytes */
+    byte macaddressSor[6];   /* Mac address Source | 6 bytes */
 	/* The data of the second mac address */
 	enum UNI_MULTI lastbitSor;
     enum GLOB_LOCA penultimatebitSor;
@@ -63,11 +63,12 @@ struct EtherPackage {
 
 	unsigned short length; /* the amount of data */
     
-    byte *frameCheck;    /* Frame check | 4 bytes */
+    byte frameCheck[4];    /* Frame check | 4 bytes */
 	bool isFrameCheck; /* To know if we really have the frame check or not */
 	
 	/* print: We are going to print the data as ethernet */
 	void (*print) (struct EtherPackage *etherdata);
+    void (*deconstructor) (struct EtherPackage *etherdata);
 };
 
 /* EtherPackage: Now here I load the data of the ethernet package */

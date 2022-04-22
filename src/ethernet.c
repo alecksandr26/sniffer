@@ -148,6 +148,11 @@ enum ETHER_TYPES knowEtherType (byte *data)
 	exit(EXIT_FAILURE);
 }
 
+void EthernetDeconstructor (struct EtherPackage *e)
+{
+    free(e);
+}
+
 /* EtherPackage: Now here I load the data of the ethernet package */
 struct EtherPackage *Ethernet (byte *data, unsigned short length)
 {
@@ -155,10 +160,6 @@ struct EtherPackage *Ethernet (byte *data, unsigned short length)
 
 	/* Here I load the data */
 	e->length = length - 18; /* it is possible that we don't have that frame check */
-	e->ethernetTypeBytes = (byte *) malloc(2);
-	e->macaddressDes = (byte *) malloc(6);
-	e->macaddressSor = (byte *) malloc(6);
-	e->frameCheck = (byte *) malloc(4);
 	e->data = (byte *) malloc(length);
 
 	readDataEthernet(e, data);
@@ -168,6 +169,7 @@ struct EtherPackage *Ethernet (byte *data, unsigned short length)
 	
 	/* printDataEthernet: We are going to print the data as ethernet */
     e->print = &printDataEthernet;
+    e->deconstructor = &EthernetDeconstructor;
 	
 	/* return ether package */
 	return e;

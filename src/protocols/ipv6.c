@@ -61,7 +61,7 @@ void readNextHeader (struct Ipv6 *i, byte *data)
 		h->nextHeader = nextHeader;
 		
 		/* Here I pusht the item to the list */
-		pushLinkedList(i->l, h);
+		pushLinkedList(&i->l, h);
 	}
 
 	i->protocolType = defineIpv6ProtocolType(nextHeader);
@@ -116,7 +116,7 @@ void readIpv6Protocol (struct Ipv6 *i, byte *data)
 
 	/* payload length */
 	memcpy(i->payloadLength, data, 2);
-	i->payloadLength = flipData(i->payloadLength, 2);
+    flipData(i->payloadLength, 2);
 	data += 2;
 
 	/* Next header */
@@ -147,7 +147,7 @@ void printNextHeader (struct Ipv6 *i)
 	struct node *aux;
 	struct headerNode *node;
 
-	aux = i->l->tail;
+	aux = i->l.tail;
 	while (aux != NULL) {
 		node = (struct headerNode *) aux->data;
 		printf("Next header: (%s)\n", headerListString[node->headerIndex]);
@@ -182,18 +182,42 @@ void printIpv6Protocol (struct Ipv6 *i)
 	}
 }
 
+void Ipv6PackageDeconstructor (struct Ipv6 *i)
+{
+    struct Ipv6 *extra;
+    struct node *n, *aux;
+    
+    /* First we are going to free all the memory from the linked list */
+    n = i->l.head;
+    while (n != NULL) {
+        aux = n;
+        n = n->next;
+        free((struct headerNode *) aux->data);
+        free(aux);
+    }
+
+    /* After that we need to free the icmpv6 package */
+    if (!i->justHeader) {
+        if (i->protocolData.icmpv6->extraPackage) {
+            extra = (struct Ipv6 *) i->protocolData.icmpv6->dataIpv6Package;
+            extra->deconstruct(extra);
+        }
+
+        deconstructProtocolTransport(i->protocolData, i->protocolType);
+    }
+    
+    free(i);
+}
+
+
+
 /* Ipv6Package: To create ipv6 package */
 struct Ipv6 *Ipv6Package (byte *data, bool justHeader)
 {
 	struct Ipv6 *i = (struct Ipv6 *) malloc(sizeof(struct Ipv6));
 
 	i->justHeader = justHeader;
-	i->flowLabel = (byte *) malloc(3);
-	i->payloadLength = (byte *) malloc(2);
-	i->sourceAddress = (byte *) malloc(16);
-	i->destinationAddress = (byte *) malloc(16);
-	i->justHeader = justHeader;
-	i->l = initLinkedList();
+	initLinkedList(&i->l);
 	i->headerIndex = -1;
 
 	/* Here we read the protocol */
@@ -203,6 +227,7 @@ struct Ipv6 *Ipv6Package (byte *data, bool justHeader)
 		i->protocolData = defineProtocolTransport(i->protocolType, i->data, i->payloadLength, Ipv6Package);
 	
 	i->print = &printIpv6Protocol;
+    i->deconstruct = &Ipv6PackageDeconstructor;
 	
 	return i;
 }

@@ -146,30 +146,35 @@ void printIcmp (struct Icmp *i)
 	puts(")");
 	
 	if (i->typeI == ECHO_REPLY || i->typeI == ECHO_REQUEST) {
-		printf("Identifier: (%u)\n", (*(unsigned short *) flipData(i->identifier, 2)));
-		printf("Sequence Number: (%u)\n", (*(unsigned short *) flipData(i->sequenceNumber, 2)));
+        flipData(i->identifier, 2);
+		printf("Identifier: (%u)\n", i->identifier);
+        flipData(i->sequenceNumber, 2);
+		printf("Sequence Number: (%u)\n", i->sequenceNumber);
 		printDataInHex(i->data, i->length);
 		return; /* Here we finish reading the data */
 	}
 	else if (i->typeI == REDIRECT_MESSAGE)
 		printIpv4(i->ipv4, "Gateway");
 	
-	else if (i->typeI == UNREACHABLE)
-		printf("Next-hop MTU: %u\n", (*(unsigned short *) flipData(i->nextHopMTU, 4)));
+	else if (i->typeI == UNREACHABLE) {
+        flipData(i->nextHopMTU, 4);
+        printf("Next-hop MTU: %u\n", i->nextHopMTU);
+    }
 	puts("---------------------------------------");
 }
+
+
+/* IcmpPackageDeconstructor: To deconstruct an icmp package */
+void IcmpPackageDeconstructor (struct Icmp *i)
+{
+    free(i);
+}
+
 
 /* Icmppackage: Build an icmp object data */
 struct Icmp *IcmpPackage (byte *data, unsigned short length, void *(*Ipv4Package)(byte *data, bool justHeader))
 {
 	struct Icmp *i = (struct Icmp *) malloc(sizeof(struct Icmp));
-
-	i->checkSum = (byte *) malloc(2);
-	i->identifier = (byte *) malloc(2);
-	i->sequenceNumber = (byte *) malloc(2);
-	i->ipv4 = (byte *) malloc(2);
-	i->nextHopMTU = (byte *) malloc(2);
-	i->ipv4Data = (byte *) malloc(20);
 	
 	i->length = length - 8;
 	readDataIcmp(i, data);
@@ -180,6 +185,7 @@ struct Icmp *IcmpPackage (byte *data, unsigned short length, void *(*Ipv4Package
 	
 	i->typeI = knowTypeOfIcmp(i->type);
 	i->print = &printIcmp;
+    i->deconstruct = &IcmpPackageDeconstructor;
 
 	return i;
 }

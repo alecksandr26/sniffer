@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <arpa/inet.h>
 
 struct node {
@@ -27,7 +28,7 @@ typedef unsigned char byte;
 #endif
 
 /* initlinkedlist: To create a linked list */
-struct linkedList *initLinkedList ();
+void initLinkedList (struct linkedList *i);
 
 /* pushlinkedlist: To push one element inside of the list */
 void pushLinkedList (struct linkedList *i, void *data);
@@ -45,7 +46,7 @@ void printHex (byte *hex, int l);
 void printMacAddress (byte *address, bool broadCast, char *macName);
 
 /* flipData: Here we flip the bytes from data types  */
-byte *flipData (byte *data, unsigned l);
+void flipData (byte *data, unsigned l);
 
 /* printIpv4: To print the Ipv4 */
 void printIpv4 (byte *ipv4, char *type);

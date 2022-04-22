@@ -1,6 +1,3 @@
-
-
-
 #ifndef __FILE_H_
 #define __FILE_H_
 
@@ -8,7 +5,7 @@
 /* this is the struct file */
 
 struct File {
-	char *name;
+	char name[100];
 	unsigned char *data;
 	unsigned length;
 	

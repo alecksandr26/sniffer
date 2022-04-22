@@ -17,7 +17,7 @@ struct headerNode {
 
 struct Ipv6 {
 	/* To create the linked list */
-	struct linkedList *l;
+	struct linkedList l;
 	
 	/* This is the protocol type */
 	enum PROTOCOL_TRANSPORT protocolType;
@@ -28,12 +28,12 @@ struct Ipv6 {
 
 	byte version;
 	byte trafficClass;
-	byte *flowLabel; /* 3 bytes */
-	byte *payloadLength; /* 2 bytes */
+	byte flowLabel[3]; /* 3 bytes */
+	byte payloadLength[2]; /* 2 bytes */
 	byte nextHeader;
 	byte hopLimit;
-	byte *sourceAddress; /* 16 bytes */
-	byte *destinationAddress; /* 16 bytes */
+	byte sourceAddress[16]; /* 16 bytes */
+	byte destinationAddress[16]; /* 16 bytes */
 
 	int headerIndex; /* This is the index to the */
 	bool headerList;
@@ -42,6 +42,7 @@ struct Ipv6 {
 	
 	/* print: To print the protocol */
 	void (*print) (struct Ipv6 *ip);
+    void (*deconstruct) (struct Ipv6 *ip);
 };
 
 /* Ipv6Package: To create a ipv6 package */

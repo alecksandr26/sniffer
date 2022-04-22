@@ -30,7 +30,8 @@ struct Package {
 	Ether *ether;
 	
 	/* print: To print the protocol that we receive */
-	void (*print) (struct Package *package);	
+	void (*print) (struct Package *package);
+    void (*deconstructor) (struct Package *package);
 };
 
 /* Package: This is the constructor we need the data*/

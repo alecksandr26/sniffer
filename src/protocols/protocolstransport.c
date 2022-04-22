@@ -18,6 +18,24 @@ void printIpv4ProtocolTransport(union ProtocolTransport p, enum PROTOCOL_TRANSPO
 	}
 }
 
+
+void deconstructProtocolTransport (union ProtocolTransport p, enum PROTOCOL_TRANSPORT pt)
+{
+    switch (pt) {
+    case TCP:
+        break;
+    case UDP:
+        break;
+    case ICMP:
+        p.icmp->deconstruct(p.icmp);
+        break;
+    case ICMPV6:
+        p.icmpv6->deconstruct(p.icmpv6);
+        break;
+    }
+}
+
+
 /* defineprotocoltransport: To define the protocol */
 union ProtocolTransport defineProtocolTransport (enum PROTOCOL_TRANSPORT protocol, byte *data, unsigned short length, void *(*IpvPackage)(byte *data, bool justHeader))
 {

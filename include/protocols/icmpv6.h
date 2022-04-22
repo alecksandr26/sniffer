@@ -56,13 +56,13 @@ enum TYPE_ICMPV6 {
 struct Icmpv6 {
 	byte type;
 	byte code;
-	byte *checkSum; /* 2 bytes */
+	byte checkSum[2]; /* 2 bytes */
 	byte *messageBody; /* The rest of the header */
 	byte *data; /* To poin to the next data */
 
 	/* if it is a ping or pong */
-	byte *identifier; /* 2 bytes */
-	byte *sequenceNumber; /* 2 bytes */
+	byte identifier[2]; /* 2 bytes */
+	byte sequenceNumber[4]; /* 4 bytes */
 
 	/* If we need to read again the ipv6 header */
 	bool extraPackage;
@@ -73,6 +73,7 @@ struct Icmpv6 {
 	struct NDP *ndp; /* To select the protocol */
 	
 	void (*print) (struct Icmpv6 *icmpv6);
+    void (*deconstruct) (struct Icmpv6 *icmpv6);
 };
 
 

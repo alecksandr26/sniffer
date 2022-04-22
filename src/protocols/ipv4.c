@@ -30,11 +30,11 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
 	data += 1;
 
 	memcpy(i->length, data, 2); /* Total length */
-	i->length = flipData(i->length, 2);
+	flipData(i->length, 2);
 	data += 2;
 
 	memcpy(i->id, data, 2); /* identification */
-	i->id = flipData(i->id, 2);
+	flipData(i->id, 2);
 	data += 2;
 
 	memcpy(&(i->flags), data, 1); /* The flags of the package */
@@ -43,7 +43,7 @@ void readDataIpv4 (struct Ipv4 *i, byte *data)
    
 	memcpy(i->offset, data, 2); /* The offset from the package */
 	*((unsigned short *) i->offset) &= 0b1111111100011111;
-	i->offset = flipData(i->offset, 2);
+	flipData(i->offset, 2);
 	data += 2;
 	
 	memcpy(&(i->TTL), data, 1); /* Time To Live */
@@ -117,19 +117,31 @@ void printIpv4Protocol (struct Ipv4 *i)
 	}
 }
 
+void Ipv4PackageDeconstruct (struct Ipv4 *i)
+{
+    struct Ipv4 *extra; /* Pointer that points to the extra package */
+    
+    if (!i->justHeader) {
+        /* Before deconstruct the another package we need to make sure our self
+           that there is not an extra package
+         */
+        if (i->protocolType == ICMP && i->protocolData.icmp->extraIpv4Package) {
+            extra = (struct Ipv4 *) i->protocolData.icmp->ipv4Package;
+            extra->deconstruct(extra);
+        }
+        deconstructProtocolTransport(i->protocolData, i->protocolType);
+    }
+    
+    free(i);
+}
+
+
 /* Ipv4package: This function will create the ipv4 object */
 struct Ipv4 *Ipv4Package (byte *data, bool justHeader)
 {
 	struct Ipv4 *i = (struct Ipv4 *) malloc(sizeof(struct Ipv4));
 	unsigned short l;
-
-	i->length = (byte *) malloc(2);
-	i->id = (byte *) malloc(2);
-	i->offset = (byte *) malloc(2);
-	i->checkSum = (byte *) malloc(2);
-	i->srcIpv4 = (byte *) malloc(4);
-	i->desIpv4 = (byte *) malloc(4);
-	i->options = (byte *) malloc(40);
+    
 	i->justHeader = justHeader; /* if we want to print just the header */
 	
 	readDataIpv4(i, data);
@@ -143,6 +155,7 @@ struct Ipv4 *Ipv4Package (byte *data, bool justHeader)
 		i->protocolData = defineProtocolTransport(i->protocolType, i->data, l, Ipv4Package);
 	
 	i->print = &printIpv4Protocol;
-	
+    i->deconstruct = &Ipv4PackageDeconstruct;
+    
 	return i;
 }

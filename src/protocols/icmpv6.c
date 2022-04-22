@@ -104,19 +104,19 @@ struct NDP *routerAdvertisementReadData (byte *data, struct NDP *ra)
 	/* the life time */
 	ra->lifetime = (byte *) malloc(sizeof(2));
 	memcpy(ra->lifetime, data, 2);
-	ra->lifetime = flipData(ra->lifetime, 2);
+    flipData(ra->lifetime, 2);
 	data += 2;
 	
 	/* reachabletime */
 	ra->reachableTime = (byte *) malloc(sizeof(4));
 	memcpy(ra->reachableTime, data, 4);
-	ra->reachableTime = flipData(ra->reachableTime, 4);
+    flipData(ra->reachableTime, 4);
 	data += 4;
 	
 	/* retrasTimer */
 	ra->retransTimer = (byte *) malloc(sizeof(4));
 	memcpy(ra->retransTimer, data, 4);
-	ra->retransTimer = flipData(ra->retransTimer, 4);
+    flipData(ra->retransTimer, 4);
 	data += 4;
 	
 	return ra;
@@ -163,7 +163,7 @@ void readOption (byte *data, enum TYPE_OPTIONS_ICMPV6 type, struct Option *op)
 	case REDIRECT_MTU_ICMPV6:
 		op->mtu = (byte *) malloc(4);
 		memcpy(op->mtu, data, 4);
-		op->mtu = flipData(op->mtu, 3);
+	    flipData(op->mtu, 3);
 		break;
 	}
 }
@@ -254,10 +254,10 @@ void readIcmpv6Package (byte *data, struct Icmpv6 *i)
 		knowAndReadNDPProtocol(data, i);
 	else if (i->type == 128 || i->type == 129) {
 		memcpy(i->identifier, data, 2);
-		i->identifier = flipData(i->identifier, 2);
+	    flipData(i->identifier, 2);
 		data += 2;
 		memcpy(i->sequenceNumber, data, 2);
-		i->sequenceNumber = flipData(i->sequenceNumber, 2);
+	    flipData(i->sequenceNumber, 2);
 		data += 2;
 		i->data = data;
 	} else if (i->type == 1) { /* To read the ipv6 package */
@@ -431,20 +431,25 @@ void printIcmpv6 (struct Icmpv6 *i)
 	puts("---------------------------------------");
 }
 
+void Icmpv6PackageDeconstructor (struct Icmpv6 *i)
+{
+    free(i);
+}
+
+
 /* Icmpv6Packge: To catch the icmpv6 package */
 struct Icmpv6 *Icmpv6Package (byte *data, unsigned short length, void *(*Ipv6Package)(byte *data, bool justHeader))
 {
 	struct Icmpv6 *i = (struct Icmpv6 *) malloc(sizeof(struct Icmpv6));
 	
 	i->extraPackage = false;
-	i->checkSum = (byte *) malloc(2);
-	i->identifier = (byte *) malloc(4);
-	i->sequenceNumber = (byte *) malloc(4);
+    
 	i->Ipv6Package = Ipv6Package;
 	
 	readIcmpv6Package(data, i);
 	
 	i->print = &printIcmpv6;
+    i->deconstruct = &Icmpv6PackageDeconstructor;
 	
 	return i;
 }

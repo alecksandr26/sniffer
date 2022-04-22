@@ -13,19 +13,19 @@ struct Ipv4 { /* 20 bytes */
 	byte version; /* 4 bits */
 	byte IHL; /* 4 bits */
 	byte TOS;
-	byte *length; 
-	byte *id; /* identification 2 bytes */
+	byte length[2]; 
+	byte id[2]; /* identification 2 bytes */
 	byte flags; /* 3 bits */
-	byte *offset; /* 13 bits */
+	byte offset[2]; /* 13 bits */
 	byte TTL;
 	byte protocol;
 	enum PROTOCOL_TRANSPORT protocolType;
-	byte *checkSum;
+	byte checkSum[2];
 	
-	byte *srcIpv4;
-	byte *desIpv4;
+	byte srcIpv4[4];
+	byte desIpv4[4];
 	
-	byte *options;
+	byte options[40];
 	byte *data; /* will points to the rest of bytes */
 	bool justHeader;
 
@@ -33,6 +33,7 @@ struct Ipv4 { /* 20 bytes */
 	
 	/* print: To print all the protocol */
 	void (*print) (struct Ipv4 *ip);
+    void (*deconstruct) (struct Ipv4 *ip);
 };
 
 /* justHeader If only we want to print the header or all the package */

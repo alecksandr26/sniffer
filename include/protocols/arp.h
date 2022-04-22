@@ -28,18 +28,19 @@ enum REQUEST_REPLY {
 struct Arp {
 	enum REQUEST_REPLY request;
 	enum PROTOCOL_TYPES protocolType;
-	byte *hardwareLength;
-	byte *protocolLength;
-	byte *hardwareType;
-	byte *protocol;
-	byte *byteOfRequestReply;
-	byte *ipv4Sender;
-	byte *macSender;
-	byte *ipv4Target;
-	byte *macTarget;
+	byte hardwareLength[1];
+	byte protocolLength[1];
+	byte hardwareType[2];
+	byte protocol[2];
+	byte byteOfRequestReply[2];
+	byte ipv4Sender[4];
+	byte macSender[6];
+	byte ipv4Target[4];
+	byte macTarget[4];
 
 	/* To print the data from the pacakge */
 	void (*print) (struct Arp *a);
+    void (*deconstruct) (struct Arp *a);
 };
 
 /* AprPackage: This function will create all our arp structure */

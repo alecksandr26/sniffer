@@ -36,12 +36,38 @@ void printProtocol (Pak *package)
 	}
 }
 
+/* deconstructProtocol: To destroy the received package */
+void deconstructProtocol (Ether *ether, Pak *package)
+{
+    switch (ether->etherType) {
+	case ARP_TYPE:
+		package->protocol.arp->deconstruct(package->protocol.arp);
+		break;
+	case IPV4_TYPE: /* We want to read the complete package */
+        package->protocol.ipv4->deconstruct(package->protocol.ipv4);
+		break;
+	case IPV6_TYPE:
+        package->protocol.ipv6->deconstruct(package->protocol.ipv6);
+		break;
+	}
+}
+
 /* printPackage: This function will all the package */
 void printPackage (Pak *p)
 {
 	p->ether->print(p->ether);
 	printProtocol(p);
 }
+
+
+void PackageDeconstructor (Pak *p)
+{
+    deconstructProtocol(p->ether, p);
+    p->ether->deconstructor(p->ether);
+    free(p);
+}
+
+
 
 /* Package: This is the constructor we need the data*/
 struct Package *Package (byte *data, unsigned short dataLength)
@@ -53,6 +79,7 @@ struct Package *Package (byte *data, unsigned short dataLength)
 	p->protocol = defineProtocol(p->ether, p->ether->data);
 	
 	p->print = &printPackage;
+    p->deconstructor = &PackageDeconstructor;
 	
 	/* Here I return the object */
 	return p;

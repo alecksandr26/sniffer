@@ -101,32 +101,25 @@ void printArpData (struct Arp *a)
 	
 }
 
+void ArpPackageDeconstruct (struct Arp *a)
+{
+    free(a);
+}
+
 /* AprPackage: This function will create all our arp structure  */
 struct Arp *ArpPackage (byte *data)
 {
 	struct Arp *a = (struct Arp *) malloc(sizeof(struct Arp));
 
-	a->hardwareType = (byte *) malloc(2);
-	a->protocol = (byte *) malloc(2);
-	a->byteOfRequestReply = (byte *) malloc(2);
-	a->hardwareLength = (byte *) malloc(1);
-	a->protocolLength = (byte *) malloc(1);
-	
-	/* Here we commit the error */
-	a->macSender = (byte *) malloc(6); /* Catch the mac address */
-	a->ipv4Sender = (byte *) malloc(4);
-	
-	/* Here we commit the error */
-	a->macTarget = (byte *) malloc(6); /* Catch the mac address */
-	a->ipv4Target = (byte *) malloc(4);
-	
 	readDataArp(data, a);
    
 	a->protocolType = knowProtocolType(a->protocol);
-	
+
 	a->request = defineOperationRequest(a->byteOfRequestReply);
 
 	a->print = &printArpData;
+
+    a->deconstruct = &ArpPackageDeconstruct;
 	
 	return a;
 }

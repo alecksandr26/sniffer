@@ -1,13 +1,11 @@
 #include "../../include/helpers/helpers.h"
 
 /* initlinkedlist: To create a linked list */
-struct linkedList *initLinkedList ()
+void initLinkedList (struct linkedList *l)
 {
-	struct linkedList *l = (struct linkedList *) malloc(sizeof(struct linkedList));
 	l->len = 0;
 	l->head = NULL;
 	l->tail = NULL;
-	return l;
 }
 
 /* pushlinkedlist: To push one element inside of the list */
@@ -78,17 +76,15 @@ void printDataInHex (byte *data, unsigned l)
 }
 
 /* flipData: Here we flip the bytes from data types  */
-byte *flipData (byte *data, unsigned l)
+void flipData (byte *data, unsigned l)
 {
 	int i; /* index */
-	byte *temp = (byte *) malloc(l);
+	byte temp[l];
 
+    memcpy(temp, data, l);
+    
 	for (i = 0; i < l; ++i)
-		*(temp + (l - 1) - i) = *(data + i);
-
-	free(data);
-   
-	return temp;
+        data[(l - 1) - i] = temp[i];
 }
 
 /* printIpv4: To print the Ipv4 */

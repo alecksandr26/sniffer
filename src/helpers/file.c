@@ -58,7 +58,7 @@ struct File *File (char *fileName)
 	struct File *f = (struct File *) malloc(sizeof(struct File));
 
 	/* Here I declare the attributes */
-	f->name = fileName;
+    memcpy(f->name, fileName, 100);
 
 	/* Here link the method */
 	f->seeHex = &seeHex;

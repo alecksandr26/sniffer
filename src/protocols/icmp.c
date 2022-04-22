@@ -163,7 +163,6 @@ void printIcmp (struct Icmp *i)
 	puts("---------------------------------------");
 }
 
-
 /* IcmpPackageDeconstructor: To deconstruct an icmp package */
 void IcmpPackageDeconstructor (struct Icmp *i)
 {

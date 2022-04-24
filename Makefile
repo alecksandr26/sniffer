@@ -1,7 +1,7 @@
 C = clang
 CFLAGS = -g -W
 
-LIBS = lib/libfile.so lib/libhelpers.so lib/libpackage.so lib/libethernet.so lib/libprotocols.so
+LIBS = lib/libfile.so lib/libhelpers.so lib/libpackage.so lib/libethernet.so lib/libprotocols.so lib/libnetwork.so
 
 PROTO = src/protocols/*.c
 PROTO_H = include/protocols/*.h
@@ -9,6 +9,10 @@ PROTO_H = include/protocols/*.h
 all: main
 
 lib/libfile.so: src/helpers/file.c include/helpers/file.h
+	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
+
+# To compile the network dependency 
+lib/libnetwork.so: src/helpers/network.c include/helpers/file.h
 	$(C) $(CFLAGS) -fPIC -shared -lc $< -o $@
 
 # Some extra usefull functions used by serveral dependencies
@@ -25,9 +29,9 @@ lib/libethernet.so: src/ethernet.c include/ethernet.h
 lib/libprotocols.so: $(PROTO) $(PROTO_H)
 	$(C) $(CFLAGS) -fPIC -shared -lc $(PROTO) -o $@ 
 
-# To compile the main program 
+# To compile the main program we need to add the libraries
 main: main.c $(LIBS)
-	$(C) $(CFLAGS) $< $(LIBS) -o $@
+	$(C) $(CFLAGS) $< $(LIBS) -o $@ -lpcap
 
 clean:
 	rm $(BINS) $(LIBS)

@@ -1,5 +1,6 @@
 # Sniffer
-Is a program that sniffes the network
+A program that can interpret network packages by capturing them and analyzing them.
+
 ## To build
 To build the program run the command `make`.
 ```

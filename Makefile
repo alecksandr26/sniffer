@@ -1,6 +1,7 @@
 C = clang
 CFLAGS = -g -W
 CFLAGS_STATIC = -static-libgcc
+STATIC=false
 
 LIBS = lib/libfile.so lib/libhelpers.so lib/libpackage.so lib/libethernet.so lib/libprotocols.so lib/libnetwork.so
 
@@ -61,19 +62,27 @@ lib/libprotocols.o: $(PROTO) $(PROTO_H)
 	mv *.o lib/
 	ld -r $(PROTOCOLS_OBJECTS) -o $@
 
+# To create the directory
+lib:
+	mkdir $@
+
+
 # To compile the main program we need to add the libraries
-main: main.c $(LIBS)
+main: main.c lib $(LIBS)
 	$(C) $(CFLAGS) $< $(LIBS) -o $@ -lpcap
 
+
 # To compile the binary in a static way
-static: main.c $(LIBS_STATIC)
+static: main.c lib $(LIBS_STATIC)
 	$(C) $(CFLAGS_STATIC) $< $(LIBS_STATIC) -o $@ -lpcap
 
-clean:
-	rm $(LIBS)
-	rm main
 
-static_clean:
-	rm lib/*.o
-	rm static
+clean:
+	rm $(LIBS) main
+
+clean_static:
+	rm $(PROTOCOLS_OBJECTS) $(LIBS_STATIC) static
+
+
+
 

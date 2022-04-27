@@ -10,7 +10,7 @@ Or if you want a static binary executable run this another one.
 make static
 ```
 
-## To usuage
+## To usage
 To read captured packages as binary file, run this command<br />
 ```
 ./main --file <file-name>

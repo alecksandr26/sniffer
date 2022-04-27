@@ -70,7 +70,8 @@ static: main.c $(LIBS_STATIC)
 	$(C) $(CFLAGS_STATIC) $< $(LIBS_STATIC) -o $@ -lpcap
 
 clean:
-	rm main $(LIBS)
+	rm $(LIBS)
+	rm main
 
 static_clean:
 	rm lib/*.o

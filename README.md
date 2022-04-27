@@ -14,19 +14,19 @@ make static
 To read captured packages as binary file, run this command<br />
 ```
 ./main --file <file-name>
-```<br />
-Or....<br />
+```
+Or....
 ```
 ./main -f <file-name>
-```<br /><br />
-
+```
+<br />
 To read a package from the network you will need to run the program with sudo privileges.<br />
 ```
 sudo ./main --network
-```<br />
-Or...<br />
+```
+Or...
 ```
 sudo ./main -n
-```<br />
+```
 ## Todo
 Create the tcp and udp interpretation

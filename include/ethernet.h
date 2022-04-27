@@ -28,12 +28,6 @@ enum GLOB_LOCA {
 /* The amount ehter types */
 #define AMOUNT_ETHER_TYPES 4
 
-/* The ethernetTypes in decimal numbers */
-unsigned short ETHER_TYPE_DECMIAL[AMOUNT_ETHER_TYPES] = { 1544, 8, 129,	56710 };
-
-/* The list of ether type string */
-char *ETHER_TYPE_STRING[AMOUNT_ETHER_TYPES] = { "ARP", "IPV4", "VLAN", "IPV6" };
-
 /* The types of ethernet */
 enum ETHER_TYPES {
 	ARP_TYPE,

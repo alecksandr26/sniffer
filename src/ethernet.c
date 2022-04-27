@@ -1,6 +1,13 @@
 /* Here we are going to include ethernet.h */
 #include "../include/ethernet.h"
 
+/* The ethernetTypes in decimal numbers */
+unsigned short ETHER_TYPE_DECMIAL[AMOUNT_ETHER_TYPES] = { 1544, 8, 129,	56710 };
+
+/* The list of ether type string */
+char *ETHER_TYPE_STRING[AMOUNT_ETHER_TYPES] = { "ARP", "IPV4", "VLAN", "IPV6" };
+
+
 /* mulOrUni: To know if it is multicast or unicast mac address */
 enum UNI_MULTI mulOrUni (byte *data)
 {

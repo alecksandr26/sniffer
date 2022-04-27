@@ -1,5 +1,22 @@
 # Sniffer
 Is a program that sniffes the network
-# Todo
-Create a package type in ipv6
-Start creating the shit thing of pcap
+## Usuage
+To read a file
+       ```
+       ./main --file <file-name>
+       ```
+Or you can run
+        ```
+        ./main -f <file-name>
+        ```
+
+To read a package from the network
+        ```
+        ./main --network
+        ```
+Or you can run
+        ```
+        ./main -n
+        ```
+## Todo
+Create the tcp and udp interpretation

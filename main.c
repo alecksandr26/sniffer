@@ -32,7 +32,7 @@ int main (int argc, char *argv[])
 	if (3 != argc && argc != 2)
 		usage(argv[0]);
 	else if ((strcmp(argv[1], "--file") == 0) || (strcmp(argv[1], "-f") == 0)) { /* To read a file */
-        F *f = File(argv[1]);
+        F *f = File(argv[2]);
         Pak *pack = Package(f->data, f->length);
         pack->print(pack);
         pack->deconstructor(pack);

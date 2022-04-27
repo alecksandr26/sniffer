@@ -12,21 +12,21 @@ make static
 
 ## To usuage
 To read captured packages as binary file, run this command<br />
-       ```
-       ./main --file <file-name>
-       ```<br />
-       Or....<br />
-        ```
-        ./main -f <file-name>
-        ```<br /><br />
+```
+./main --file <file-name>
+```<br />
+Or....<br />
+```
+./main -f <file-name>
+```<br /><br />
 
 To read a package from the network you will need to run the program with sudo privileges.<br />
-        ```
-        sudo ./main --network
-        ```<br />
+```
+sudo ./main --network
+```<br />
 Or...<br />
-        ```
-        sudo ./main -n
-        ```<br />
+```
+sudo ./main -n
+```<br />
 ## Todo
 Create the tcp and udp interpretation

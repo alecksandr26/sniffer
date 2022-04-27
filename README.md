@@ -20,11 +20,14 @@ Or....
 ./main -f <file-name>
 ```
 <br />
-To read a package from the network you will need to run the program with sudo privileges.<br />
+To read a package from the network you will need to run the program with sudo privileges.
+
 ```
 sudo ./main --network
 ```
+
 Or...
+
 ```
 sudo ./main -n
 ```

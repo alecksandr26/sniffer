@@ -1,22 +1,29 @@
 # Sniffer
 Is a program that sniffes the network
-## Usuage
-To read a file
+## To build
+You only need to run the Makefile with the command `make`.
+```
+make
+```
+Or if you want to get a portable exectuable.
+
+## To usuage
+To read a file <br />
        ```
        ./main --file <file-name>
-       ```
-Or you can run
+       ```<br />
+Or you can run<br />
         ```
         ./main -f <file-name>
-        ```
+        ```<br />
 
-To read a package from the network
+To read a package from the network you will need to run the program with sudo privileges.<br />
         ```
-        ./main --network
+        sudo ./main --network
+        ```<br />
+Or you can run<br />
         ```
-Or you can run
-        ```
-        ./main -n
-        ```
+        sudo ./main -n
+        ```<br />
 ## Todo
 Create the tcp and udp interpretation

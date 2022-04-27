@@ -8,11 +8,11 @@ make
 Or if you want to get a portable exectuable.
 
 ## To usuage
-To read a file <br />
+You can read captured packages as binary files using this argument<br />
        ```
        ./main --file <file-name>
        ```<br />
-Or you can run<br />
+       Or....<br />
         ```
         ./main -f <file-name>
         ```<br />
@@ -21,7 +21,7 @@ To read a package from the network you will need to run the program with sudo pr
         ```
         sudo ./main --network
         ```<br />
-Or you can run<br />
+Or...<br />
         ```
         sudo ./main -n
         ```<br />

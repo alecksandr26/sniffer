@@ -8,7 +8,7 @@ make
 Or if you want to get a portable exectuable.
 
 ## To usuage
-You can read captured packages as binary files using this argument<br />
+To read captured packages as binary file, run this command<br />
        ```
        ./main --file <file-name>
        ```<br />

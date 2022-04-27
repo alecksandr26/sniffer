@@ -1,11 +1,14 @@
 # Sniffer
 Is a program that sniffes the network
 ## To build
-You only need to run the Makefile with the command `make`.
+To build the program run the command `make`.
 ```
 make
 ```
-Or if you want to get a portable exectuable.
+Or if you want a static binary executable run this another one.
+```
+make static
+```
 
 ## To usuage
 To read captured packages as binary file, run this command<br />

@@ -110,7 +110,7 @@ void printIpv4Protocol (struct Ipv4 *i)
 	puts("---------------------------------------");
 	/* Here print the rest of the procotol */
 	if (!i->justHeader) {
-		printIpv4ProtocolTransport(i->protocolData, i->protocolType);
+		printLayer4ProtocolTransport(i->protocolData, i->protocolType);
 		/* Here we print the ipv4 package inside of the icmp package */
 		if (i->protocolType == ICMP && i->protocolData.icmp->extraIpv4Package)
 			printIpv4Protocol((struct Ipv4 *) i->protocolData.icmp->ipv4Package);

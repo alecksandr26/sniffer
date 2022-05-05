@@ -9,6 +9,15 @@ char *headerListString[] = {"Hop-by-Hop", "TCP", "UDP", "Routing",
 bool isProtocolIpv6 (int p)
 {
 	switch (p) {
+
+    case 6: /* tcp */
+        return true;
+        break;
+        
+    case 17: /* udp */
+        return true;
+        break;
+        
 	case 58: /* icmpv6 */
 		return true;
 		break;
@@ -35,6 +44,12 @@ int defineNextHeader (int next)
 enum PROTOCOL_TRANSPORT defineIpv6ProtocolType (byte p)
 {
 	switch (p) {
+    case 6:
+        return TCP;
+        break;
+    case 17:
+        return UDP;
+        break;
 	case 58: /* If it is an icmpv6 protocol */
 		return ICMPV6;
 		break;
@@ -62,6 +77,9 @@ void readNextHeader (struct Ipv6 *i, byte *data)
 		
 		/* Here I pusht the item to the list */
 		pushLinkedList(&i->l, h);
+        
+        if (h->headerIndex == -1)
+            break;
 	}
 
 	i->protocolType = defineIpv6ProtocolType(nextHeader);
@@ -150,8 +168,13 @@ void printNextHeader (struct Ipv6 *i)
 	aux = i->l.tail;
 	while (aux != NULL) {
 		node = (struct headerNode *) aux->data;
-		printf("Next header: (%s)\n", headerListString[node->headerIndex]);
-		printf("Header extension length: (%u)\n", node->headerExtensionLength);
+        if (node->nextHeader == -1) {
+            printf("Next header: (%s)\n", headerListString[node->headerIndex]);
+            printf("Header extension lenght: (%u)\n", node->headerExtensionLength);
+        } else {
+            puts("Next header: nil");
+            puts("Header extesion lenght: (nil) ");
+        }
 		aux = aux->next;
 	}
 }
@@ -176,12 +199,13 @@ void printIpv6Protocol (struct Ipv6 *i)
 	puts("---------------------------------------");
 
 	if (!i->justHeader) {
-		i->protocolData.icmpv6->print(i->protocolData.icmpv6);
-		if (i->protocolData.icmpv6->extraPackage)
+        printLayer4ProtocolTransport(i->protocolData, i->protocolType);
+		if (i->protocolType == ICMP && i->protocolData.icmpv6->extraPackage)
 			i->print(i->protocolData.icmpv6->dataIpv6Package);
 	}
 }
 
+/* Ipv6PackageDeconstructor: To destroy the object */
 void Ipv6PackageDeconstructor (struct Ipv6 *i)
 {
     struct Ipv6 *extra;
@@ -198,7 +222,7 @@ void Ipv6PackageDeconstructor (struct Ipv6 *i)
 
     /* After that we need to free the icmpv6 package */
     if (!i->justHeader) {
-        if (i->protocolData.icmpv6->extraPackage) {
+        if (i->protocolType == ICMP && i->protocolData.icmpv6->extraPackage) {
             extra = (struct Ipv6 *) i->protocolData.icmpv6->dataIpv6Package;
             extra->deconstruct(extra);
         }

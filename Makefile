@@ -9,8 +9,12 @@ LIBS_STATIC = lib/libfile.o lib/libhelpers.o lib/libpackage.o lib/libethernet.o 
 
 PROTOCOLS_OBJECTS = lib/arp.o lib/icmp.o lib/icmpv6.o lib/ipv4.o lib/ipv6.o lib/protocolstransport.o
 
-PROTO = src/protocols/arp.c src/protocols/icmp.c src/protocols/icmpv6.c  src/protocols/ipv4.c src/protocols/ipv6.c src/protocols/protocolstransport.c
-PROTO_H =  include/protocols/arp.h include/protocols/icmp.h include/protocols/icmpv6.h include/protocols/ipv4.h include/protocols/ipv6.h include/protocols/protocolstransport.h
+PROTO = src/protocols/arp.c src/protocols/icmp.c src/protocols/icmpv6.c  src/protocols/ipv4.c src/protocols/ipv6.c src/protocols/protocolstransport.c src/protocols/udp.c src/protocols/protocolsAplication.c src/protocols/dns.c
+PROTO_H =  include/protocols/arp.h include/protocols/icmp.h include/protocols/icmpv6.h include/protocols/ipv4.h include/protocols/ipv6.h include/protocols/protocolstransport.h include/protocols/udp.h include/protocols/protocolsAplication.h include/protocols/dns.h
+
+# List of all the tests
+TESTS = test/testipv6package
+
 
 all: main
 
@@ -83,6 +87,14 @@ clean:
 clean_static:
 	rm $(PROTOCOLS_OBJECTS) $(LIBS_STATIC) static
 
+# This are the tests
 
+# Compile the test 
+test/testipv6package: test/testipv6package.c lib/libprotocols.so lib/libhelpers.so
+	$(C) $(CFLAGS) $< lib/libprotocols.so lib/libhelpers.so -o $@
+
+# Run all the tests
+test: $(TESTS)
+	./test/testipv6package
 
 

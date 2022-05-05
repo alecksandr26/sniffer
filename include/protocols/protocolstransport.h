@@ -5,6 +5,7 @@
 
 #include "icmp.h"
 #include "icmpv6.h"
+#include "udp.h"
 
 enum PROTOCOL_TRANSPORT {
 	TCP,
@@ -16,10 +17,11 @@ enum PROTOCOL_TRANSPORT {
 union ProtocolTransport {
 	Icmp *icmp;
 	Icmpv6 *icmpv6;
+    Udp *udp;
 };
 
-/* printipv4protocoltransport: Prints the protocol inside of ipv4 */
-void printIpv4ProtocolTransport (union ProtocolTransport p, enum PROTOCOL_TRANSPORT pt);
+/* printLayer4ProtocolTransport: Prints the protocol inside of ipv4 */
+void printLayer4ProtocolTransport (union ProtocolTransport p, enum PROTOCOL_TRANSPORT pt);
 
 void deconstructProtocolTransport (union ProtocolTransport p, enum PROTOCOL_TRANSPORT pt);
 

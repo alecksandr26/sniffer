@@ -44,7 +44,7 @@ make clean_static
 ```
 
 ## Todo
-Repair Ipv6 bug crash malloc top extra urgent!!!!!
-Refactor to the main.c file urgent!!!
-And finish dns protocol
+Repair Ipv6 bug crash malloc top extra urgent!!!!! \n
+Refactor to the main.c file urgent!!! \n
+And finish dns protocol \n
 

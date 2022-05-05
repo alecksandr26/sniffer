@@ -44,4 +44,7 @@ make clean_static
 ```
 
 ## Todo
-Create the tcp and udp interpretation
+Repair Ipv6 bug crash malloc top extra urgent!!!!!
+Refactor to the main.c file urgent!!!
+And finish dns protocol
+

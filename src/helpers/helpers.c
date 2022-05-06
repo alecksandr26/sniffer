@@ -52,13 +52,14 @@ void deleteElementLinkedList (struct linkedList *i, void *data)
 void printIpv6 (byte *ip, char *type)
 {
 	/* The address was */
-	char *addr = (char *) malloc(INET_ADDRSTRLEN);
-
+	char addr[INET6_ADDRSTRLEN];
+    
+    memset(addr, 0, INET6_ADDRSTRLEN);
+    
 	/* Here we catch the ipv6 */
 	inet_ntop(AF_INET6, ip, addr, INET6_ADDRSTRLEN);
 
 	printf("%s: %s\n", type, addr);
-	free(addr);
 }
 
 /* printDataInHex: To print a bunch of data in hex */

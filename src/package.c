@@ -57,18 +57,18 @@ void deconstructProtocol (Ether *ether, Pak *package)
 void printPackage (Pak *p)
 {
 	p->ether->print(p->ether);
+    
 	printProtocol(p);
 }
 
 
 void PackageDeconstructor (Pak *p)
 {
+    
     deconstructProtocol(p->ether, p);
     p->ether->deconstructor(p->ether);
     free(p);
 }
-
-
 
 /* Package: This is the constructor we need the data*/
 struct Package *Package (byte *data, unsigned short dataLength)

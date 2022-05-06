@@ -1,12 +1,23 @@
 #ifndef __FILE_H_
 #define __FILE_H_
 
+/* std file */
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
 
 /* this is the struct file */
 
+/* The maximun size of a ethernet package */
+#define BUFSIZE 1518
+
+
 struct File {
+    unsigned char data[BUFSIZE];
 	char name[100];
-	unsigned char *data;
 	unsigned length;
 	
 	/* seeHex: prints the info in hex */

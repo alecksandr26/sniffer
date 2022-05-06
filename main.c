@@ -12,7 +12,6 @@
 #include "include/helpers/network.h"
 
 
-
 void usage (char *main)
 {
     fprintf(stderr, "Error: wrong arguments\n\n");
@@ -38,8 +37,6 @@ void usage (char *main)
     fprintf(stderr, "\tUsage: sudo %s -pl2\n\n", main);
     exit(EXIT_FAILURE);
 }
-
-
 
 /* dumpcap: To dump the captured file */
 bool dumpcap (byte *data, unsigned len, int numcap)
@@ -98,9 +95,6 @@ bool capProtocol (byte *data, unsigned len, int numcap)
 }
 
 
-
-
-
 int main (int argc, char *argv[])
 {
     char ans[100];
@@ -133,11 +127,13 @@ int main (int argc, char *argv[])
             f->deconstructor(f);
         }
     } else if ((strcmp(argv[1], "--network") == 0) || (strcmp(argv[1], "-n") == 0)) { /* To read a network package */
+        NetWork *n;
+        Pak *pack;
         do {
-            NetWork *n = NetWorkAnalyze();
+            n = NetWorkAnalyze();
         
             /* Now we mount everything to the pack dependency */
-            Pak *pack = Package(n->data, n->length);
+            pack = Package(n->data, n->length);
             pack->print(pack);
 
             /* if the flags "-c" is active */

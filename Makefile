@@ -89,12 +89,19 @@ clean_static:
 
 # This are the tests
 
+
+
 # Compile the test 
 test/testipv6package: test/testipv6package.c lib/libprotocols.so lib/libhelpers.so
 	$(C) $(CFLAGS) $< lib/libprotocols.so lib/libhelpers.so -o $@
 
+
 # Run all the tests
-test: $(TESTS)
-	./test/testipv6package
+test: $(TESTS) main
+	#./test/testipv6package
+	#./test/testipv6package ./test/capprotocol0.bin
+	./main -f test_files/ipv6_icmpv6_igmp.bin test/cap0.bin
+
+
 
 

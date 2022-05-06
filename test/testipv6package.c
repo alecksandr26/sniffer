@@ -1,8 +1,13 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+
 
 #include "../include/helpers/helpers.h"
 #include "../include/protocols/ipv6.h"
+
 
 
 
@@ -14,22 +19,52 @@ char PAYLOAD[] = {
 int main (int argc, char *argv[])
 {
     int fd;
+    Ipv6 *i;
+    byte buffer[129];
+
+    int *e;
     
     /* Here I use file as payload */
-    if (argc > 1) {
+    if (argc == 2) {
+        if ((fd = open(argv[1], O_RDONLY)) < 0) {
+            puts("Test fail");
+            exit(EXIT_FAILURE);
+        }
         
+        read(fd, buffer, 129);
+        close(fd);
+
+        i = Ipv6Package(buffer, false);
+        i->print(i);
+    
+        i->deconstruct(i);
+        
+        i = Ipv6Package(buffer, false);
+        i->print(i);
+    
+        i->deconstruct(i);
+
+        i = Ipv6Package(buffer, false);
+        i->print(i);
+    
+        i->deconstruct(i);
+
+        i = Ipv6Package(buffer, false);
+        i->print(i);
+    
+        i->deconstruct(i);
+        
+    } else {
+        i = Ipv6Package(PAYLOAD, false);
+
+        i->print(i);
+    
+        i->deconstruct(i);
     }
-    Ipv6 *i = Ipv6Package(PAYLOAD, false);
 
-    i->print(i);
-    
-    i->deconstruct(i);
-    
-    i = Ipv6Package(PAYLOAD, false);
 
-    i->print(i);
-    
-    i->deconstruct(i);
+    e = malloc(sizeof(int));
+    free(e);
     
     return 0;
 }

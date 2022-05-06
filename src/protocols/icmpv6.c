@@ -81,8 +81,6 @@ struct NDP *neighborAdverstisementReadData (byte *data, struct NDP *na)
 	memcpy(&(na->flags), data, 1);
 	data += 4;
 
-	na->targetAddress = (byte *) malloc(16); /* 16 bytes */
-
 	/* The target address */
 	memcpy(na->targetAddress, data, 16);
 	data += 16;
@@ -102,19 +100,16 @@ struct NDP *routerAdvertisementReadData (byte *data, struct NDP *ra)
 	data++;
 	
 	/* the life time */
-	ra->lifetime = (byte *) malloc(sizeof(2));
 	memcpy(ra->lifetime, data, 2);
     flipData(ra->lifetime, 2);
 	data += 2;
 	
 	/* reachabletime */
-	ra->reachableTime = (byte *) malloc(sizeof(4));
 	memcpy(ra->reachableTime, data, 4);
     flipData(ra->reachableTime, 4);
 	data += 4;
 	
 	/* retrasTimer */
-	ra->retransTimer = (byte *) malloc(sizeof(4));
 	memcpy(ra->retransTimer, data, 4);
     flipData(ra->retransTimer, 4);
 	data += 4;
@@ -125,10 +120,7 @@ struct NDP *routerAdvertisementReadData (byte *data, struct NDP *ra)
 /* neighborSolicitationReadData: To read the header */
 struct NDP *neighborSolicitationReadData (byte *data, struct NDP *ns)
 {
-	ns->targetAddress = (byte *) malloc(sizeof(16));
-	
 	data += 4;
-	
 	memcpy(ns->targetAddress, data, 16);
 	data += 16;
 	
@@ -139,10 +131,6 @@ struct NDP *neighborSolicitationReadData (byte *data, struct NDP *ns)
 struct NDP *redirectMessageReadData (byte *data, struct NDP *rm)
 {
 	data += 4;
-
-	rm->destinationAddress = (byte *) malloc(16);
-	rm->targetAddress = (byte *) malloc(16);
-
 	memcpy(rm->targetAddress, data, 16);
 	data += 16;
 	
@@ -157,11 +145,9 @@ void readOption (byte *data, enum TYPE_OPTIONS_ICMPV6 type, struct Option *op)
 {
 	switch (type) {
 	case SOURCE_LINK_LAYER_ADDRESS_ICMPV6: case TARGET_LINK_LAYER_ADDRESS_ICMPV6:
-		op->macAddress = (byte *) malloc(6);
 		memcpy(op->macAddress, data, 6);
 		break;
 	case REDIRECT_MTU_ICMPV6:
-		op->mtu = (byte *) malloc(4);
 		memcpy(op->mtu, data, 4);
 	    flipData(op->mtu, 3);
 		break;
@@ -433,6 +419,19 @@ void printIcmpv6 (struct Icmpv6 *i)
 
 void Icmpv6PackageDeconstructor (struct Icmpv6 *i)
 {
+    struct Option *op, *aux;
+    
+    if (i->ndp != NULL) {
+        op = i->ndp->tail;
+        
+        while (op != NULL) {
+            aux = op;
+            op = op->next;
+            free(aux);
+        }
+    }
+    
+    free(i->ndp);
     free(i);
 }
 

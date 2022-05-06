@@ -1,40 +1,46 @@
 #include "../../include/protocols/dns.h"
 
-
 /* readNameDnsPackage: Is double pointer to the data pointer */
-byte readNameDnsPackage (struct QuestionsDns *qd, byte *data)
+byte *readNameDnsPackage (char *domainName, byte *data, byte *bsp)
 {
-    byte len, sum;
+    byte len;
     const byte dot = '.';
 
-    memset(qd->domainName, 0, 253);
-    sum = 0;
-    do {
+    memset(domainName, 0, 253);
+
+    len = 1;
+    while (len != 0) {
         memcpy(&len, data, 1);
         data++;
-        
-        if (len == 0) {/* if finish reading the name */
-            sum += 2;
-            continue;
-        }
 
+        if (len == 0)
+            break;
         
-        if (sum != 0) { /* To add the . to the domain name */
-            memcpy(qd->domainName + sum, &dot, 1);
-            sum++;
-        }
-        
-        memcpy(qd->domainName + sum, data, len);
-        data += len; /* move the pointer */
-        sum += len; /* get the total lenght of the word */
-        
-    } while (len != 0);
+        if (len == 0xc0) { /* pointer */
+            /* get the lenght */
+            memcpy(&len, bsp + *(data), 1);
 
-    return sum;
+            /* Read the data from the pointer */
+            memcpy(domainName, bsp + *(data) + 1, len);
+            data++; /* just increment one because is where the pointer needs to jump */
+            domainName += len;
+
+        } else {
+            memcpy(domainName, data, len);
+            data += len; /* move the pointer */
+            domainName += len;
+            
+        }
+        if (*(data ) != 0) { /* To add the . to the domain name */
+            memcpy(domainName++, &dot, 1);
+        }
+    }
+
+    return data;
 }
 
 
-void printQuestionDnsPackage (struct QuestionsDns *qd)
+void printQuestionDnsPackage (const struct QuestionsDns *qd)
 {
     puts("\nQuestion: ");
     printf("name: %s\n", qd->domainName);
@@ -45,17 +51,13 @@ void printQuestionDnsPackage (struct QuestionsDns *qd)
 }
 
 
-
-
 /* To readn and return the questions dns structure */
-struct QuestionsDns *QuestionsDnsPackage (byte *data)
+struct QuestionsDns *QuestionsDnsPackage (byte *data, byte *bsp)
 {
      struct QuestionsDns *qd = (struct QuestionsDns *) malloc(sizeof(struct QuestionsDns));
 
-     /* Here We are going to read and get the question of a dns */
-
      /* first read the name */
-     data += readNameDnsPackage(qd, data);
+     data = readNameDnsPackage(qd->domainName, data, bsp);
 
      /* now read the type */
      memcpy(&(qd->type), data, 2);
@@ -75,6 +77,58 @@ struct QuestionsDns *QuestionsDnsPackage (byte *data)
 }
 
 
+/* printAnswerDnsPackage: To print the answer */
+void printAnswerDnsPackage (const struct AnswerDns *ad)
+{
+    puts("\nAnswer: ");
+    printf("name: %s\n", ad->domainName);
+    printf("type: %s\n", (ad->type == 1) ? "A (Host Address) (1)" : "NULL");
+    printf("class: %s", (ad->class == 1) ? "IN (" : "NULL (");
+    printHex(ad->classBytes, 1);
+    puts(")");
+    printf("ttl: %u\n", ad->ttl);
+    printf("rdlenght: %u\n", ad->rdLenght);
+}
+
+
+/* AnswerDnsPackage:  */
+struct AnswerDns *AnswerDnsPackage (byte *data, byte *bsp)
+{
+    struct AnswerDns *ad = (struct AnswerDns *) malloc(sizeof(struct AnswerDns));
+    
+    /* first read the name */
+    
+    data = readNameDnsPackage(ad->domainName, data, bsp) - 1;
+
+    /* now read the type */
+    memcpy(&(ad->type), data, 2);
+    data += 2;
+    flipData(&(ad->type), 2);
+
+    /* now read the class */
+    memcpy(&(ad->class), data, 2);
+    memcpy(ad->classBytes, data, 2);
+    data += 2;
+    flipData(&(ad->class), 2);
+
+    /* read the ttl */
+    memcpy(&(ad->ttl), data, 4);
+    data += 4;
+    flipData(&(ad->ttl), 4);
+
+    /* read the rdLenght */
+    memcpy(&(ad->rdLenght), data, 2);
+    data += 2;
+    flipData(&(ad->rdLenght), 2);
+    
+
+    ad->print = &printAnswerDnsPackage;
+
+    /* Track the pointer */
+    ad->data = data;
+    
+    return ad;
+}
 
 
 /* readDnsPackage: To read the protocol dns */
@@ -124,20 +178,27 @@ void readDnsPackage (struct Dns *d, byte *data)
 
     index = 0;
     
-    /* Now read the data */
+    /* Now read the data of the questions */
     l = d->questionCount;
-    while (l) { /* l > 0 */
-        d->payload[index++].questionsDns = QuestionsDnsPackage(data);
+    while (l--) { /* l > 0 */
+        d->payload[index++].questionsDns = QuestionsDnsPackage(data, d->bsp);
         data = d->payload[index - 1].questionsDns->data;
         d->types[index - 1] = QUESTIONS_DNS; /* Here We put a question */
-        l--;
+    }
+
+    /* Now read the data of the answers */
+    l = d->answerCount;
+    while (l--) {
+        d->payload[index++].answerDns = AnswerDnsPackage(data, d->bsp);
+        data = d->payload[index - 1].answerDns->data;
+        d->types[index - 1] = ANSWER_DNS;
     }
     
     
 }
 
 
-void printDnsFlags (struct Dns *d)
+void printDnsFlags (const struct Dns *d)
 {
     printf("\nFlags: \n");
     /* Now print the flags */
@@ -189,7 +250,7 @@ void printDnsFlags (struct Dns *d)
 
 
 /* printDnsPayload: To print the payload message */
-void printDnsPayload (struct Dns *d)
+void printDnsPayload (const struct Dns *d)
 {
     int index;
 
@@ -199,6 +260,7 @@ void printDnsPayload (struct Dns *d)
             d->payload[index].questionsDns->print(d->payload[index].questionsDns);
             break;
         case ANSWER_DNS:
+            d->payload[index].answerDns->print(d->payload[index].answerDns);
             break;
         case AUTHORIZATION_DNS:
             break;
@@ -210,7 +272,7 @@ void printDnsPayload (struct Dns *d)
 
 
 /* printDnsPackage: To print the package */
-void printDnsPackage (struct Dns *d)
+void printDnsPackage (const struct Dns *d)
 {
 	puts("---------------------------------------");
     puts("| DNS |\n");
@@ -228,20 +290,38 @@ void printDnsPackage (struct Dns *d)
 	puts("---------------------------------------");
 }
 
-
 /* deconstructdnsPackage: Is the package to deconstruct */
 void deconstructDnsPackage (struct Dns *d)
 {
+    int index;
+
+    /* Free all the payloads */
+    for (index = 0; index < d->amountPayload; index++) {
+        switch (d->types[index]) {
+        case QUESTIONS_DNS:
+            free(d->payload[index].questionsDns);
+            break;
+        case ANSWER_DNS:
+            free(d->payload[index].answerDns);
+            break;
+        case AUTHORIZATION_DNS:
+            break;
+        case ADDITIONAL_DNS:
+            break;
+        }
+    }
+
+    /* Free all the lists and objects */
     free(d->payload);
     free(d->types);
     free(d);
 }
 
-
 struct Dns *DnsPackage (byte *data)
 {
     struct Dns *d = (struct Dns *) malloc(sizeof(struct Dns));
 
+    d->bsp = data;
     readDnsPackage(d, data);
     
     d->deconstruct = &deconstructDnsPackage;
@@ -249,7 +329,4 @@ struct Dns *DnsPackage (byte *data)
     
     return d;
 }
-
-
-
 

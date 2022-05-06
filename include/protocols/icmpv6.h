@@ -10,8 +10,8 @@ struct Option {
 	int typeOption;
 	byte len;
 	struct Option *next;
-	byte *macAddress; /* 6 bytes */
-	byte *mtu; /* 4 bytes */
+	byte macAddress[6]; /* 6 bytes */
+	byte mtu[4]; /* 4 bytes */
 };
 
 enum TYPE_OPTIONS_ICMPV6 {
@@ -27,16 +27,18 @@ enum TYPE_OPTIONS_ICMPV6 {
 struct NDP {
 	/* neighborAdvertisement */
 	byte flags;
-	byte *targetAddress; /* 16 bytes */
+	byte targetAddress[16]; /* 16 bytes */
 	
 	/* routerAdvertisement */
 	byte curHopLimit;
-	byte *lifetime; /* 2 bytes | seconds */
-	byte *reachableTime; /* 4 bytes | mili seconds */
-	byte *retransTimer; /* 4 bytes | mili seconds */
+	byte lifetime[2]; /* 2 bytes | seconds */
+	byte reachableTime[2]; /* 4 bytes | mili seconds */
+	byte retransTimer[2]; /* 4 bytes | mili seconds */
 
 	/* redirectMessage */
-	byte *destinationAddress; /* 16 bytes */
+	byte destinationAddress[16]; /* 16 bytes */
+    
+    /* This is lnked list */
 	struct Option *tail;
 };
 

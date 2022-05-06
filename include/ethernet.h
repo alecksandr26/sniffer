@@ -8,11 +8,6 @@
 
 #include "./helpers/helpers.h"
 
-#ifndef __BYTE_DATA_
-#define __BYTE_DATA_
-/* This is necessary to create the buffers */
-typedef unsigned char byte;
-#endif
 
 /* The different types of enums */
 enum UNI_MULTI {

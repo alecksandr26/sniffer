@@ -44,6 +44,17 @@ void readUdpPackage (struct Udp *u, byte *data)
     u->data = data;
 }
 
+/* stringProtocolAplication: returns the port protocol */
+char *stringProtocolAplication (int port)
+{
+    switch (port) {
+    case 53:
+        return "DNS";
+    default:
+        return "";
+    }
+}
+
 
 /* printUdpProtocol: To print the protocol */
 void printUdpProtocol (struct Udp *u)
@@ -51,8 +62,8 @@ void printUdpProtocol (struct Udp *u)
     
 	puts("---------------------------------------");
     puts("| UDP |\n");
-    printf("Src Port: %u \n", u->srcPort);
-    printf("Dst Port: %u \n", u->dstPort);
+    printf("Src Port: %u %s\n", u->srcPort, stringProtocolAplication(u->srcPort));
+    printf("Dst Port: %u %s\n", u->dstPort, stringProtocolAplication(u->dstPort));
     printf("Lenght: %u\n", u->lenght);
     printf("ChecKSum: ");
     printHex(u->checksum, 1);

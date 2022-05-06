@@ -1,25 +1,12 @@
 /* Here we include the header file */
 #include "../../include/helpers/file.h"
 
-/* std file */
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
-
-/* The maximun size of a ethernet package */
-#define BUFSIZE 1518
 
 /* readFile: This function will read the whole file */
 void readFile (struct File *f)
 {
 	int fd, n;    /* file descriptor | transferred bytes */
-
-	/* Give memory to data */
-	f->data = (char *) malloc(BUFSIZE);
-	
+    
 	/* Open the file */
 	if ((fd = open(f->name, O_RDONLY, 0)) == -1) {
 		fprintf(stderr, "file: error opening the file %s: %s\n", f->name, strerror(errno));
@@ -48,7 +35,6 @@ void seeHex (struct File *f)
 /* deconstructor: To free all the memory */
 void deconstructor (struct File *f)
 {
-    free(f->data);
 	free(f);
 }
 

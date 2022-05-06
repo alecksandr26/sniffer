@@ -76,7 +76,8 @@ void readNextHeader (struct Ipv6 *i, byte *data)
 		h->nextHeader = nextHeader;
 		
 		/* Here I pusht the item to the list */
-		pushLinkedList(&i->l, h);
+		pushLinkedList(&(i->l), h);
+
         
         if (h->headerIndex == -1)
             break;
@@ -168,7 +169,7 @@ void printNextHeader (struct Ipv6 *i)
 	aux = i->l.tail;
 	while (aux != NULL) {
 		node = (struct headerNode *) aux->data;
-        if (node->nextHeader == -1) {
+        if (node->headerIndex != -1) {
             printf("Next header: (%s)\n", headerListString[node->headerIndex]);
             printf("Header extension lenght: (%u)\n", node->headerExtensionLength);
         } else {
@@ -192,17 +193,21 @@ void printIpv6Protocol (struct Ipv6 *i)
 	printf("Hop Limit: (%u)\n", i->hopLimit);
 	printIpv6(i->sourceAddress, "Source Address");
 	printIpv6(i->destinationAddress, "Destination Address");
+    
 	if (i->headerList && !i->justHeader) {
 		puts("\nExtension headers: ");
 		printNextHeader(i);
 	}
 	puts("---------------------------------------");
-
+    
+    
+    
 	if (!i->justHeader) {
         printLayer4ProtocolTransport(i->protocolData, i->protocolType);
 		if (i->protocolType == ICMP && i->protocolData.icmpv6->extraPackage)
 			i->print(i->protocolData.icmpv6->dataIpv6Package);
 	}
+    
 }
 
 /* Ipv6PackageDeconstructor: To destroy the object */
@@ -222,7 +227,7 @@ void Ipv6PackageDeconstructor (struct Ipv6 *i)
 
     /* After that we need to free the icmpv6 package */
     if (!i->justHeader) {
-        if (i->protocolType == ICMP && i->protocolData.icmpv6->extraPackage) {
+        if (i->protocolType == ICMPV6 && i->protocolData.icmpv6->extraPackage) {
             extra = (struct Ipv6 *) i->protocolData.icmpv6->dataIpv6Package;
             extra->deconstruct(extra);
         }
@@ -234,14 +239,13 @@ void Ipv6PackageDeconstructor (struct Ipv6 *i)
 }
 
 
-
 /* Ipv6Package: To create ipv6 package */
 struct Ipv6 *Ipv6Package (byte *data, bool justHeader)
 {
 	struct Ipv6 *i = (struct Ipv6 *) malloc(sizeof(struct Ipv6));
 
 	i->justHeader = justHeader;
-	initLinkedList(&i->l);
+	initLinkedList(&(i->l));
 	i->headerIndex = -1;
 
 	/* Here we read the protocol */

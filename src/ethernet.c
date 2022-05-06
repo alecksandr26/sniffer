@@ -100,7 +100,6 @@ bool isBroadCast (byte *data)
 bool checkTheSecureSum (unsigned frameCheck, byte *data, unsigned len)
 {
 	unsigned i, test;
-	
 
 	test = 0;
 	printf("%u\n", *data);
@@ -108,13 +107,13 @@ bool checkTheSecureSum (unsigned frameCheck, byte *data, unsigned len)
 		test += *(data + i);
 	printf("%u\n", *(data + i - 1));
 	printf("%u == %u\n", frameCheck, test * (len - 19));
+    
 	return frameCheck == test;
 }
 
 /* readDataEthernet: To load all the data to the ethernet package */
 void readDataEthernet (struct EtherPackage *e, byte *data)
 {
-	byte *checkData = data;
 	
 	/* Read the mac address dest */
     memcpy(e->macaddressDes, data, sizeof(byte) * 6);
@@ -167,8 +166,7 @@ struct EtherPackage *Ethernet (byte *data, unsigned short length)
 
 	/* Here I load the data */
 	e->length = length - 18; /* it is possible that we don't have that frame check */
-	e->data = (byte *) malloc(length);
-
+    
 	readDataEthernet(e, data);
 
 	/* To know which package we were receiving */

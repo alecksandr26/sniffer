@@ -10,27 +10,29 @@ Or if you want a static binary executable run this another one.
 ```
 make static
 ```
-
 ## To usage
-To read captured packages as binary file, run this command<br />
+To read captured packages as binary file, run this command using the flag `-f`.
 ```
 ./main --file <file-name>
 ```
-Or....
 ```
 ./main -f <file-name>
 ```
 <br />
-To read a package from the network you will need to run the program with sudo privileges.
-
+To read a packet from the network, use the flag `-n`, also you will need to run the program as root user.
 ```
 sudo ./main --network
 ```
-
-Or...
-
 ```
 sudo ./main -n
+```
+### To capture and save network packages
+You can capture and save any cached network packet using the flag `-c`.
+```
+sudo ./main --network --capture
+```
+```
+sudo ./main -n -c
 ```
 ## To clean
 You can delete all the ".o" or ".so" files running this command depending how do you compile the program.<br />

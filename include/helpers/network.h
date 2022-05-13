@@ -25,6 +25,9 @@ struct NetWork {
     void (*seeHex) (struct NetWork *network);
     /* deconstructor: To deconstruct the object */
     void (*deconstructor) (struct NetWork *network);
+
+    /* next: To read another package from the network */
+    void (*next) (struct NetWork *network);
 };
 
 /* This is the object which will analyze the network */

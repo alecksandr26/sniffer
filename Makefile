@@ -1,5 +1,5 @@
 C = clang
-CFLAGS = -g -W
+CFLAGS = -ggdb -Wall -O0
 CFLAGS_STATIC = -static-libgcc
 STATIC=false
 

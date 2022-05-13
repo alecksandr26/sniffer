@@ -15,6 +15,8 @@ void pushLinkedList (struct linkedList *i, void *data)
 	n->prev = NULL;
 	n->next = NULL;
 	n->data = data;
+
+    
 	
 	if (i->len == 0) {
 		i->head = n;
@@ -47,6 +49,32 @@ void deleteElementLinkedList (struct linkedList *i, void *data)
 		aux = aux->next;
 	}
 }
+
+/* popElementLinkedList: To pop the last element inside of the linked list */
+void *popDataLinkedList (struct linkedList *l)
+{
+    struct node *aux;
+    void *data;
+
+   
+    
+    /* be carefull */
+    if (l->len == 0 || l->head == NULL)
+        return NULL;
+
+    aux = l->head;
+    l->head = l->head->prev;
+
+    /* catch the data and delete the node */
+    data = aux->data;
+    free(aux);
+
+    /* decrease the amount */
+    l->len--;
+    
+    return data;
+}
+
 
 /* printIpv6: To print the ipv6 */
 void printIpv6 (byte *ip, char *type)

@@ -150,8 +150,7 @@ enum ETHER_TYPES knowEtherType (byte *data)
 		if (*((unsigned short *) data) == ETHER_TYPE_DECMIAL[i])
 			return i;
 	
-	puts("Error: Uknow ethernet type");
-	exit(EXIT_FAILURE);
+    fprintf(stderr, "Error ether type... %u\n", *((unsigned short *) data));
 }
 
 void EthernetDeconstructor (struct EtherPackage *e)

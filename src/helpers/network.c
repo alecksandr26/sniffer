@@ -57,6 +57,15 @@ void NetWorkAnalyzeDeconstruct (struct NetWork *n)
 }
 
 
+/* nextNetWorkPackage: to read another package  */
+void nextNetWorkPackage (struct NetWork *n)
+{
+    /* Now we need to catch the data */
+    n->data = pcap_next(n->session, &n->header);
+    n->length = n->header.len;
+}
+
+
 /* This is the object which will analyze the network */
 struct NetWork *NetWorkAnalyze ()
 {
@@ -92,6 +101,7 @@ struct NetWork *NetWorkAnalyze ()
 
     n->seeHex = &NetWorkAnalyzeSeeHex;
     n->deconstructor = &NetWorkAnalyzeDeconstruct;
+    n->next = &nextNetWorkPackage;
     
     return n;
 }

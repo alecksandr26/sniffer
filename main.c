@@ -12,6 +12,37 @@
 #include "include/helpers/network.h"
 
 
+#define FLAGS_LEN 4
+
+/* flags of the program */
+char *SHORT_FLAGS[] = {"-f", "-n", "-c", "-pl2"};
+char *LARGE_FLAGS[] = {"--file", "--network", "--capture", "--protocol-layer-2"};
+
+
+enum FLAGS {
+    FILER,
+    NETWORK,
+    CAPTURE,
+    PROTOCOL_LAYER_2,
+    NO_FLAG
+};
+
+
+
+/* getFlag: Get the flag */
+enum FLAGS getFlag (char *flag)
+{
+    unsigned i;
+
+    for (i = 0; i < FLAGS_LEN; ++i) {
+        if (strcmp(flag, SHORT_FLAGS[i]) == 0 || strcmp(flag, LARGE_FLAGS[i]) == 0)
+            return i;
+    }
+
+    return NO_FLAG;
+}
+
+
 void usage (char *main)
 {
     fprintf(stderr, "Error: wrong arguments\n\n");
@@ -66,6 +97,7 @@ bool dumpcap (byte *data, unsigned len, int numcap)
 }
 
 
+
 /* capProtocol: To capture an sspecify protocol of layer 2 */
 bool capProtocol (byte *data, unsigned len, int numcap)
 {
@@ -95,86 +127,149 @@ bool capProtocol (byte *data, unsigned len, int numcap)
 }
 
 
-int main (int argc, char *argv[])
+void getInputLower (char *input)
 {
+    int i;
+    
+    /* To convert the string a lowercase string */
+    for (i = 0; input[i] != 0; ++i)
+        input[i] = tolower(input[i]);
+}
+
+
+/* captureNetowrk: Function that with the active arguments we capture the network */
+void captureNetwork (const bool savePackage, const bool pl2)
+{
+    int numcap;
     char ans[100];
-    int i, numcap, numprocap;
-    bool cappro;
+    NetWork *network;
+    Pak *pack;
 
-    numprocap = numcap = 0;
-    cappro = false;
-	if (2 > argc)
-		usage(argv[0]);
-	else if (((strcmp(argv[1], "--file") == 0) || (strcmp(argv[1], "-f") == 0)) && argc >= 3) { /* To read a file */
-        F *f;
-        Pak *pack;
+    network = NetWorkAnalyze();
+
+    do {
+        /* mount the data and print it */
+        pack = Package(network->data, network->length);
+        pack->print(pack);
         
-        if ((strcmp(argv[argc - 1], "-pl2") == 0) || (strcmp(argv[argc - 1], "--protocol-layer-2") == 0))
-            cappro = true;
-        
-        /* If you want to read multiple files */
-        for (i = 2; i < ((cappro) ? argc - 1 : argc); ++i) {
-            printf("\nfile%i: %s\n", i - 1, argv[i]);
-            f = File(argv[i]);
-            pack = Package(f->data, f->length);
-            
-            pack->print(pack);
-
-            if (cappro)
-                capProtocol(pack->ether->data, f->length - 14, numprocap++);
-
-            pack->deconstructor(pack);
-            f->deconstructor(f);
-        }
-    } else if ((strcmp(argv[1], "--network") == 0) || (strcmp(argv[1], "-n") == 0)) { /* To read a network package */
-        NetWork *n;
-        Pak *pack;
-        do {
-            n = NetWorkAnalyze();
-        
-            /* Now we mount everything to the pack dependency */
-            pack = Package(n->data, n->length);
-            pack->print(pack);
-
-            /* if the flags "-c" is active */
-            if (argc == 3 && ((strcmp(argv[2], "-c") == 0) || (strcmp(argv[2], "--capture") == 0))) {
-                puts("Do you want to capture this package?: (yes/no)");
-                printf(">>> ");
-                scanf("%s", ans);
-                /* To convert the string a lowercase string */
-                for (i = 0; ans[i] != 0; ++i)
-                    ans[i] = tolower(ans[i]);
-                if (strcmp(ans, "yes") == 0)
-                    dumpcap(n->data, n->length, numcap++);
-            }
-            
-            /* To capture a protocol bytes */
-            if ((strcmp(argv[argc - 1], "-pl2") == 0) || (strcmp(argv[argc - 1], "--protocol-layer-2") == 0))
-                capProtocol(pack->ether->data, n->length - 14, numprocap++);
-            
-            /* To read another package */
-            puts("Do you want to catch another package?: (yes/no)");
+        /* If we want to save the package */
+        if (savePackage) {
+            puts("Do you want to capture this package?: (yes/no)");
             printf(">>> ");
             scanf("%s", ans);
-            /* To convert the string a lowercase string */
-            for (i = 0; ans[i] != 0; ++i)
-                ans[i] = tolower(ans[i]);
+            getInputLower(ans);
+            if (strcmp(ans, "yes") == 0)
+                dumpcap(network->data, network->length, numcap++);
+        }
 
-            /* deconstruct the objects */
-            pack->deconstructor(pack);
-            n->deconstructor(n);
-            
-        } while (strcmp("yes", ans) == 0);
+        /* if we want to capture the protocol for testing purpuse */
+        if (pl2) {
+            puts("Do you want to capture this protocol layer 2?: (yes/no)");
+            printf(">>> ");
+            scanf("%s", ans);
+            getInputLower(ans);
+            if (strcmp(ans, "yes") == 0)
+                capProtocol(network->data, network->length, numcap++);
+        }
         
-    } else if ((strcmp(argv[1], "--capture") == 0) || (strcmp(argv[1], "-c") == 0)) {
-        /* First we analyze the network */
-        NetWork *n = NetWorkAnalyze();
-        /* dump the package */
-        dumpcap(n->data, n->length, numcap++);
+        /* To read another package */
+        puts("Do you want to catch another package?: (yes/no)");
+        printf(">>> ");
+        scanf("%s", ans);
+        getInputLower(ans);
+
+        /* destroy the package */
+        pack->deconstructor(pack);
         
-        n->deconstructor(n);
-    } else
+        /* get antoher package */
+        network->next(network);
+    } while (strcmp(ans, "yes") == 0);
+    
+    network->deconstructor(network);
+}
+
+
+
+
+
+int main (int argc, char *argv[])
+{
+    char ans[200];
+    int i, numcap, numprocap;
+    enum FLAGS flag, prev;
+    /* flags */
+    bool saveP, pl2;
+
+    F *file;
+    Pak *pack;
+
+    pl2 = saveP = false;
+    
+    if (2 > argc)
         usage(argv[0]);
+    
+    i = 1;
+    while (i < argc) {
+        flag = getFlag(argv[i]);
+        if (flag == FILER && (prev == NETWORK || prev == CAPTURE || prev == PROTOCOL_LAYER_2))
+            captureNetwork(saveP, pl2);
+        switch (flag) {
+        case FILER:
+            prev = FILER;
+            i++;
+            if (i == argc)
+                usage(argv[0]);
+            break;
+            
+        case NETWORK:
+            prev = NETWORK;
+            i++;
+            if (i == argc)
+                captureNetwork(saveP, pl2);
+            
+            break;
+            
+        case CAPTURE:
+            saveP = true;
+            prev = CAPTURE;
+            i++;
+            if (i == argc)
+                captureNetwork(saveP, pl2);
+                
+            break;
+            
+        case PROTOCOL_LAYER_2:
+            pl2 = true;
+            prev = PROTOCOL_LAYER_2;
+            i++;
+            if (i == argc)
+                captureNetwork(saveP, pl2);
+            break;
+            
+        default: /* no flag */
+            
+            /* To read a file */
+            if (prev == FILER) {
+                printf("\nfile: %s\n", argv[i]);
+                file = File(argv[i]);
+                pack = Package(file->data, file->length);
 
+                /* print the package */
+                pack->print(pack);
+
+                /* free all the memory */
+                pack->deconstructor(pack);
+                file->deconstructor(file);
+            } else {
+                usage(argv[0]);
+            }
+            
+            /* read the next argument */
+            i++;
+            break;
+        }
+    }
+    
     return 0;
 }
+

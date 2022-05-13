@@ -9,6 +9,14 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+#ifndef __BYTE_DATA_
+#define __BYTE_DATA_
+/* This is necessary to create the buffers */
+typedef unsigned char byte;
+#endif
+
+
+
 struct node {
 	void *data;
 	struct node *next;
@@ -21,11 +29,15 @@ struct linkedList {
 	unsigned len;
 };
 
-#ifndef __BYTE_DATA_
-#define __BYTE_DATA_
-/* This is necessary to create the buffers */
-typedef unsigned char byte;
-#endif
+
+/* topLinekdList: return the top head pointer */
+#define topLinkedList(list) ((list)->head)
+
+/* tailLinkedList: return the tail node */
+#define tailLinkedList(list) ((list)->tail)
+
+/* dataNode: return the data of the node */
+#define dataNode(node) ((node)->data)
 
 /* initlinkedlist: To create a linked list */
 void initLinkedList (struct linkedList *i);
@@ -35,6 +47,9 @@ void pushLinkedList (struct linkedList *i, void *data);
 
 /* deleteElement: To delete one element from the linked list */
 void deleteElementLinkedList (struct linkedList *i, void *data);
+
+/* popElementLinkedList: To pop the last element inside of the linked list */
+void *popDataLinkedList (struct linkedList *l);
 
 /* printDataInHex: To print a bunch of data in hex */
 void printDataInHex (byte *data, unsigned l);

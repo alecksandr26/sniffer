@@ -57,11 +57,18 @@ void NetWorkAnalyzeDeconstruct (struct NetWork *n)
 }
 
 
+<<<<<<< HEAD
 /* nextNetWorkPackage: to read another package  */
 void nextNetWorkPackage (struct NetWork *n)
 {
     /* Now we need to catch the data */
     n->data = pcap_next(n->session, &n->header);
+=======
+/* nextPackage: read the next package */
+void nextPackage (struct NetWork *n)
+{
+	n->data = pcap_next(n->session, &n->header);
+>>>>>>> c00870b (git pull)
     n->length = n->header.len;
 }
 
@@ -101,7 +108,11 @@ struct NetWork *NetWorkAnalyze ()
 
     n->seeHex = &NetWorkAnalyzeSeeHex;
     n->deconstructor = &NetWorkAnalyzeDeconstruct;
+<<<<<<< HEAD
     n->next = &nextNetWorkPackage;
+=======
+	n->next = &nextPackage;
+>>>>>>> c00870b (git pull)
     
     return n;
 }

@@ -1,5 +1,9 @@
 C = clang
+<<<<<<< HEAD
 CFLAGS = -ggdb -Wall -O0
+=======
+CFLAGS = -ggdb -W -O0
+>>>>>>> c00870b (git pull)
 CFLAGS_STATIC = -static-libgcc
 STATIC=false
 

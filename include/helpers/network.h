@@ -26,13 +26,8 @@ struct NetWork {
     /* deconstructor: To deconstruct the object */
     void (*deconstructor) (struct NetWork *network);
 
-<<<<<<< HEAD
-    /* next: To read another package from the network */
-    void (*next) (struct NetWork *network);
-=======
 	/* next: read the next package */
 	void (*next) (struct NetWork *network);
->>>>>>> c00870b (git pull)
 };
 
 /* This is the object which will analyze the network */

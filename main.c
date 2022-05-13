@@ -152,66 +152,15 @@ void captureNetwork (const bool savePackage, const bool pl2)
         pack = Package(network->data, network->length);
         pack->print(pack);
         
-<<<<<<< HEAD
         /* If we want to save the package */
         if (savePackage) {
             puts("Do you want to capture this package?: (yes/no)");
-=======
-        if ((strcmp(argv[argc - 1], "-pl2") == 0) || (strcmp(argv[argc - 1], "--protocol-layer-2") == 0))
-            cappro = true;
-        
-        /* If you want to read multiple files */
-        for (i = 2; i < ((cappro) ? argc - 1 : argc); ++i) {
-            printf("\nfile%i: %s\n", i - 1, argv[i]);
-            f = File(argv[i]);
-            pack = Package(f->data, f->length);
-            
-            pack->print(pack);
-
-            if (cappro)
-                capProtocol(pack->ether->data, f->length - 14, numprocap++);
-
-            pack->deconstructor(pack);
-            f->deconstructor(f);
-        }
-    } else if ((strcmp(argv[1], "--network") == 0) || (strcmp(argv[1], "-n") == 0)) { /* To read a network package */
-        NetWork *n;
-        Pak *pack;
-		n = NetWorkAnalyze();
-
-        do {
-        
-            /* Now we mount everything to the pack dependency */
-            pack = Package(n->data, n->length);
-            pack->print(pack);
-
-            /* if the flags "-c" is active */
-            if (argc == 3 && ((strcmp(argv[2], "-c") == 0) || (strcmp(argv[2], "--capture") == 0))) {
-                puts("Do you want to capture this package?: (yes/no)");
-                printf(">>> ");
-                scanf("%s", ans);
-                /* To convert the string a lowercase string */
-                for (i = 0; ans[i] != 0; ++i)
-                    ans[i] = tolower(ans[i]);
-                if (strcmp(ans, "yes") == 0)
-                    dumpcap(n->data, n->length, numcap++);
-            }
-            
-            /* To capture a protocol bytes */
-            if ((strcmp(argv[argc - 1], "-pl2") == 0) || (strcmp(argv[argc - 1], "--protocol-layer-2") == 0))
-                capProtocol(pack->ether->data, n->length - 14, numprocap++);
-            
-            /* To read another package */
-            puts("Do you want to catch another package?: (yes/no)");
->>>>>>> c00870b (git pull)
             printf(">>> ");
             scanf("%s", ans);
             getInputLower(ans);
             if (strcmp(ans, "yes") == 0)
                 dumpcap(network->data, network->length, numcap++);
         }
-
-<<<<<<< HEAD
         /* if we want to capture the protocol for testing purpuse */
         if (pl2) {
             puts("Do you want to capture this protocol layer 2?: (yes/no)");
@@ -230,26 +179,11 @@ void captureNetwork (const bool savePackage, const bool pl2)
 
         /* destroy the package */
         pack->deconstructor(pack);
-=======
-            /* deconstruct the objects */
-            pack->deconstructor(pack);
-            /* and read another package */
-			n->next(n);
-        } while (strcmp("yes", ans) == 0);
-		
-		n->deconstructor(n);
-		
-    } else if ((strcmp(argv[1], "--capture") == 0) || (strcmp(argv[1], "-c") == 0)) {
-        /* First we analyze the network */
-        NetWork *n = NetWorkAnalyze();
-        /* dump the package */
-        dumpcap(n->data, n->length, numcap++);
->>>>>>> c00870b (git pull)
-        
+
         /* get antoher package */
         network->next(network);
     } while (strcmp(ans, "yes") == 0);
-    
+
     network->deconstructor(network);
 }
 

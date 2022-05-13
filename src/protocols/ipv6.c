@@ -70,7 +70,8 @@ void readNextHeader (struct Ipv6 *i, byte *data)
 		data++;
 		
 		memcpy(&(h->headerExtensionLength), data , 1);
-		data += (h->headerExtensionLength) + 1;
+		h->headerExtensionLength += (1 * 8);
+		data += (h->headerExtensionLength) - 1;
 
 		h->headerIndex = defineNextHeader(nextHeader);
 		h->nextHeader = nextHeader;

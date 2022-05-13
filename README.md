@@ -44,7 +44,6 @@ make clean_static
 ```
 
 ## Todo
-1. Repair Ipv6 bug crash malloc top extra urgent!!!!! <br >
-2. Refactor to the main.c file urgent!!! <br >
-3. And finish dns protocol <br >
+1. Start witht the tcp protocol
+2. Do a refactor of the complete code
 

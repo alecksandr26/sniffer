@@ -18,7 +18,6 @@ To read captured packages as binary file, run this command using the flag `-f`.
 ```
 ./main -f <file-name>
 ```
-<br />
 To read a packet from the network, use the flag `-n`, also you will need to run the program as root user.
 ```
 sudo ./main --network

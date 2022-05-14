@@ -150,6 +150,22 @@ void readOption (byte *data, enum TYPE_OPTIONS_ICMPV6 type, struct Option *op)
 	case SOURCE_LINK_LAYER_ADDRESS_ICMPV6: case TARGET_LINK_LAYER_ADDRESS_ICMPV6:
 		memcpy(op->macAddress, data, 6);
 		break;
+
+	case PREFIX_INFORMATION_ICMPV6:
+		memcpy(&(op->prefixLength), data, 1);
+		data++;
+		memcpy(&(op->prefixFlags), data, 1);
+		data++;
+		memcpy(&(op->validLifeTime), data, 4);
+		flipData(&(op->validLifeTime), 4);
+		data += 4;
+		memcpy(&(op->preferredLifeTime), data, 4);
+		flipData(&(op->preferredLifeTime), 4);
+		data += 8;
+		memcpy(op->ipv6, data, 16);
+		data += 16;
+		
+		break;
 	case REDIRECT_MTU_ICMPV6:
 		memcpy(op->mtu, data, 4);
 	    flipData(op->mtu, 3);
@@ -361,7 +377,7 @@ void printNDPOptions (struct Option *op)
 	if (op != NULL)
 		puts("Options:");
 	while (op != NULL) {
-		printf("Option: (%u) (%s)\n", op->type, TYPE_ICMPV6_OPTIONS_STRING[op->typeOption]);
+		printf("\noption: (%u) (%s)\n", op->type, TYPE_ICMPV6_OPTIONS_STRING[op->typeOption]);
 		printf("Length: (%u) bytes\n", op->len);
 		switch (op->typeOption) {
 		case SOURCE_LINK_LAYER_ADDRESS_ICMPV6:
@@ -372,6 +388,21 @@ void printNDPOptions (struct Option *op)
 			break;
 		case REDIRECT_MTU_ICMPV6:
 			printf("Mtu: (%u) bytes\n", *((unsigned *) op->mtu));
+			break;
+		case PREFIX_INFORMATION_ICMPV6:
+			printf("Prefix Length: (%u) bytes\n", op->prefixLength);
+			puts("Flags:");
+			if (op->prefixFlags & 0b10000000)
+				puts("\tL 1 bit 1 on-link");
+			else
+				puts("\tL 1 bit 0 off-link");
+			if (op->prefixFlags & 0b01000000)
+				puts("\tA 2 bit 1 stateless");
+			else
+				puts("\tA 2 bit 0 not stateless");
+			printf("Valid Life Time: (%u)\n", op->validLifeTime);
+			printf("Preferred Life Time: (%u)\n", op->preferredLifeTime);
+			printIpv6(op->ipv6, "Ipv6 address:");
 			break;
 		}
 		

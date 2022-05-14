@@ -12,6 +12,14 @@ struct Option {
 	struct Option *next;
 	byte macAddress[6]; /* 6 bytes */
 	byte mtu[4]; /* 4 bytes */
+
+	/* for the prefix information */
+	byte prefixLength;
+	byte prefixFlags;
+	unsigned validLifeTime;
+	unsigned preferredLifeTime;
+	byte ipv6[16];
+	
 };
 
 enum TYPE_OPTIONS_ICMPV6 {

@@ -5,6 +5,7 @@ void printLayer4ProtocolTransport (union ProtocolTransport p, enum PROTOCOL_TRAN
 {
 	switch (pt) {
 	case TCP:
+		p.tcp->print(p.tcp);
 		break;
 	case UDP:
         p.udp->print(p.udp);

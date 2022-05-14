@@ -6,6 +6,7 @@
 #include "icmp.h"
 #include "icmpv6.h"
 #include "udp.h"
+#include "tcp.h"
 
 enum PROTOCOL_TRANSPORT {
 	TCP,
@@ -15,6 +16,7 @@ enum PROTOCOL_TRANSPORT {
 };
 
 union ProtocolTransport {
+	Tcp *tcp;
 	Icmp *icmp;
 	Icmpv6 *icmpv6;
     Udp *udp;

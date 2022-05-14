@@ -13,7 +13,15 @@ struct Tcp {
 	unsigned short dstPort;
 	unsigned sequenceNum;
 	unsigned ackNum;
+    byte dataOffset;
+    byte flags;
+    unsigned short windowSize;
+    byte checkSum[2];
+    unsigned short urgentPointer;
+    byte options;
 
+    byte *data;
+    
 	void (*print) (struct Tcp *);
 	void (*decontstruct) (struct Tcp *);
 };

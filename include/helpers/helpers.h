@@ -29,6 +29,8 @@ struct linkedList {
 	unsigned len;
 };
 
+/* stringProtocolAplication: returns protocol */
+char *stringProtocolAplication (unsigned short port);
 
 /* topLinekdList: return the top head pointer */
 #define topLinkedList(list) ((list)->head)

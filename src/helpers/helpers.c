@@ -1,5 +1,22 @@
 #include "../../include/helpers/helpers.h"
 
+
+/* stringProtocolAplication: returns the port protocol */
+char *stringProtocolAplication (unsigned short port)
+{
+    switch (port) {
+    case 53:
+        return "DNS";
+    case 80:
+        return "HTTP";
+    case 443:
+        return "HTTPS";
+    default:
+        return "";
+    }
+}
+
+
 /* initlinkedlist: To create a linked list */
 void initLinkedList (struct linkedList *l)
 {

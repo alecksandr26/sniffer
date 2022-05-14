@@ -20,6 +20,7 @@ char *TYPE_ICMPV6_STRING[] = {
 	"Router Solicitation",
 	"Neighbor Solicitation",
 	"Redirect Message",
+	"Version 2 Multicast Listener Report",
 	"Unassigned"
 };
 
@@ -69,6 +70,8 @@ enum TYPE_ICMPV6 knowTypeOfIcmpv6 (byte type)
 		return NEIGHBOR_SOLICITATION_ICMPV6;
 	case 137:
 		return REDIRECT_MESSAGE_ICMPV6;
+	case 143:
+		return VERSION_2_MULTICAST_ICMPV6;
 	default:
 		return UNASSIGNED_ICMPV6;
 	}

@@ -24,6 +24,7 @@ void deconstructProtocolTransport (union ProtocolTransport p, enum PROTOCOL_TRAN
 {
     switch (pt) {
     case TCP:
+		p.tcp->decontstruct(p.tcp);
         break;
     case UDP:
         p.udp->deconstruct(p.udp);
@@ -45,6 +46,7 @@ union ProtocolTransport defineProtocolTransport (enum PROTOCOL_TRANSPORT protoco
 	
 	switch (protocol) {
 	case TCP:
+		p.tcp = TcpPackage(data);
 		break;
 	case UDP:
         p.udp = UdpPackage(data);

@@ -23,7 +23,10 @@ void readTcpPackage (struct Tcp *t, byte *data)
 void printTcpPackage (struct Tcp *t)
 {
 	puts("---------------------------------------");
-	puts("\n| TCP |");
+	puts("| TCP |\n");
+	printf("Src Port: (%u)\n", t->srcPort);
+	printf("Dst Port: (%u)\n", t->dstPort);
+	
 	puts("---------------------------------------");
 }
 

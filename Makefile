@@ -8,10 +8,10 @@ LIBS = lib/libfile.so lib/libhelpers.so lib/libpackage.so lib/libethernet.so lib
 
 LIBS_STATIC = lib/libfile.o lib/libhelpers.o lib/libpackage.o lib/libethernet.o lib/libprotocols.o lib/libnetwork.o
 
-PROTOCOLS_OBJECTS = lib/arp.o lib/icmp.o lib/icmpv6.o lib/ipv4.o lib/ipv6.o lib/protocolstransport.o
+PROTOCOLS_OBJECTS = lib/arp.o lib/icmp.o lib/icmpv6.o lib/ipv4.o lib/ipv6.o lib/protocolstransport.o lib/tcp.o
 
-PROTO = src/protocols/arp.c src/protocols/icmp.c src/protocols/icmpv6.c  src/protocols/ipv4.c src/protocols/ipv6.c src/protocols/protocolstransport.c src/protocols/udp.c src/protocols/protocolsAplication.c src/protocols/dns.c
-PROTO_H =  include/protocols/arp.h include/protocols/icmp.h include/protocols/icmpv6.h include/protocols/ipv4.h include/protocols/ipv6.h include/protocols/protocolstransport.h include/protocols/udp.h include/protocols/protocolsAplication.h include/protocols/dns.h
+PROTO = src/protocols/arp.c src/protocols/icmp.c src/protocols/icmpv6.c  src/protocols/ipv4.c src/protocols/ipv6.c src/protocols/protocolstransport.c src/protocols/udp.c src/protocols/protocolsAplication.c src/protocols/dns.c src/protocols/tcp.c
+PROTO_H =  include/protocols/arp.h include/protocols/icmp.h include/protocols/icmpv6.h include/protocols/ipv4.h include/protocols/ipv6.h include/protocols/protocolstransport.h include/protocols/udp.h include/protocols/protocolsAplication.h include/protocols/dns.h include/protocols/tcp.h
 
 # List of all the tests
 TESTS = test/testipv6package

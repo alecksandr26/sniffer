@@ -70,7 +70,7 @@ void readNextHeader (struct Ipv6 *i, byte *data)
 		data++;
 		
 		memcpy(&(h->headerExtensionLength), data , 1);
-		h->headerExtensionLength += (1 * 8);
+		h->headerExtensionLength += 8;
 		data += (h->headerExtensionLength) - 1;
 
 		h->headerIndex = defineNextHeader(nextHeader);
@@ -97,8 +97,8 @@ void readIpv6Protocol (struct Ipv6 *i, byte *data)
 	memcpy(&(i->version), data, 1);
 	i->version &= 0b11110000;
 	i->version >>= 4;
-
-	/* To get the simple traffic class */
+    
+    /* To get the simple traffic class */
 	memcpy(&(temp), data, 1);
 	temp &= 0b00001111;
 	temp <<= 4;
@@ -112,26 +112,29 @@ void readIpv6Protocol (struct Ipv6 *i, byte *data)
 
 	/* To get the flow label */
 	memcpy(&(temp), data, 1);
+                                 
 	temp &= 0b00001111;
-	*(i->flowLabel + 2) = temp;
+	*(i->flowLabel + 3) = temp;
 	data++;
 	
 	memcpy(&(temp), data, 1);
 	temp &= 0b11110000;
-	*(i->flowLabel + 2) |= temp;
+	*(i->flowLabel + 3) |= temp;
 
 	memcpy(&(temp), data, 1);
 	temp &= 0b00001111;
-	*(i->flowLabel + 1) = temp;
+    temp <<= 4;
+	*(i->flowLabel + 2) = temp;
 	data++;
 
 	memcpy(&(temp), data, 1);
 	temp &= 0b11110000;
-	*(i->flowLabel + 1) |= temp;
+    temp >>= 4;
+	*(i->flowLabel + 2) |= temp;
 
 	memcpy(&(temp), data, 1);
 	temp &= 0b00001111;
-	*(i->flowLabel) |= temp;
+	*(i->flowLabel + 1) |= temp;
 	data++;
 
 	/* payload length */

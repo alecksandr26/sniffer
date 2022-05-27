@@ -28,7 +28,7 @@ struct Ipv6 {
 
 	byte version;
 	byte trafficClass;
-	byte flowLabel[3]; /* 3 bytes */
+	byte flowLabel[4]; /* 4 bytes */
 	byte payloadLength[2]; /* 2 bytes */
 	byte nextHeader;
 	byte hopLimit;
